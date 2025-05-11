@@ -13,6 +13,9 @@ import SellVehicle from "./pages/SellVehicle";
 import NotFound from "./pages/NotFound";
 import VehicleSearch from "./pages/VehicleSearch";
 import VehicleDetail from "./pages/VehicleDetail";
+import AdminDashboard from "./pages/AdminDashboard";
+import PaymentPage from "./pages/PaymentPage";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +34,9 @@ const App = () => (
           <Route path="/sell" element={<SellVehicle />} />
           <Route path="/vehicles" element={<VehicleSearch />} />
           <Route path="/vehicles/:id" element={<VehicleDetail />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

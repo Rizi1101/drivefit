@@ -3,17 +3,28 @@ import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
   const [vehicleType, setVehicleType] = useState("All Types");
   const [priceRange, setPriceRange] = useState("Any Price");
+  const [year, setYear] = useState("Any Year");
+  const navigate = useNavigate();
   
   const handleSearch = () => {
     toast({
       title: "Search initiated",
-      description: `Searching for ${vehicleType} vehicles in price range: ${priceRange}`,
+      description: `Searching for ${vehicleType} vehicles from ${year} in price range: ${priceRange}`,
     });
-    console.log("Search params:", { vehicleType, priceRange });
+    
+    // Construct query parameters for the search
+    const params = new URLSearchParams();
+    if (vehicleType !== "All Types") params.set("type", vehicleType);
+    if (priceRange !== "Any Price") params.set("price", priceRange);
+    if (year !== "Any Year") params.set("year", year);
+    
+    // Navigate to the search page with filters applied
+    navigate(`/vehicles?${params.toString()}`);
   };
 
   return (
@@ -40,6 +51,7 @@ const Hero = () => {
           <Button 
             className="btn-primary text-lg px-8 py-6" 
             onClick={() => {
+              navigate("/vehicles");
               toast({ title: "Find Vehicles", description: "Redirecting to vehicle search page" });
             }}
           >
@@ -49,6 +61,7 @@ const Hero = () => {
             variant="outline" 
             className="bg-white bg-opacity-20 backdrop-blur-sm text-lg px-8 py-6"
             onClick={() => {
+              navigate("/sell");
               toast({ title: "Sell Your Vehicle", description: "Redirecting to vehicle listing page" });
             }}
           >
@@ -89,14 +102,33 @@ const Hero = () => {
                 <option>PKR 6,000,000+</option>
               </select>
             </div>
-            <div className="md:col-span-1 flex">
-              <Button 
-                className="btn-secondary w-full"
-                onClick={handleSearch}
+            <div className="bg-white bg-opacity-90 rounded-lg p-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+              <select 
+                className="w-full p-2 border border-gray-300 rounded-md"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
               >
-                Search
-              </Button>
+                <option>Any Year</option>
+                <option>2023</option>
+                <option>2022</option>
+                <option>2021</option>
+                <option>2020</option>
+                <option>2019</option>
+                <option>2018</option>
+                <option>2017</option>
+                <option>2016</option>
+                <option>2015</option>
+              </select>
             </div>
+          </div>
+          <div className="mt-4">
+            <Button 
+              className="w-full md:w-auto bg-drivefit-blue hover:bg-blue-700 text-white py-3 px-6 rounded-md"
+              onClick={handleSearch}
+            >
+              Search Vehicles
+            </Button>
           </div>
         </div>
       </div>
