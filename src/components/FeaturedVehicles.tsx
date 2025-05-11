@@ -1,0 +1,88 @@
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Heart } from "lucide-react";
+
+const FEATURED_VEHICLES = [
+  {
+    id: 1,
+    title: "2021 Tesla Model 3",
+    price: "$42,990",
+    location: "New York, NY",
+    mileage: "8,500",
+    image: "https://images.unsplash.com/photo-1560958089-b8a1929cea89?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"
+  },
+  {
+    id: 2,
+    title: "2020 BMW X5",
+    price: "$54,750",
+    location: "Chicago, IL",
+    mileage: "12,300",
+    image: "https://images.unsplash.com/photo-1556189250-72ba954cfc2b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+  },
+  {
+    id: 3,
+    title: "2019 Ford F-150",
+    price: "$32,890",
+    location: "Dallas, TX",
+    mileage: "24,600",
+    image: "https://images.unsplash.com/photo-1605893477799-b99e3b8adc69?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+  },
+  {
+    id: 4,
+    title: "2022 Honda Civic",
+    price: "$26,450",
+    location: "Seattle, WA",
+    mileage: "3,200",
+    image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f37?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+  }
+];
+
+const FeaturedVehicles = () => {
+  return (
+    <section className="py-16 bg-drivefit-gray">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Vehicles</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Explore our handpicked selection of premium vehicles that match your preferences
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {FEATURED_VEHICLES.map((vehicle) => (
+            <div key={vehicle.id} className="vehicle-card group">
+              <div className="relative h-48 md:h-56">
+                <img 
+                  src={vehicle.image} 
+                  alt={vehicle.title} 
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                />
+                <button className="absolute top-2 right-2 p-2 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition-all">
+                  <Heart className="h-5 w-5 text-drivefit-red" />
+                </button>
+              </div>
+              <div className="p-4 bg-white">
+                <h3 className="text-lg font-medium mb-1">{vehicle.title}</h3>
+                <p className="text-drivefit-red font-bold mb-2">{vehicle.price}</p>
+                <div className="flex justify-between text-sm text-gray-500">
+                  <span>{vehicle.location}</span>
+                  <span>{vehicle.mileage} miles</span>
+                </div>
+                <Button className="w-full mt-4 bg-drivefit-blue hover:bg-drivefit-blue/90 text-white">View Details</Button>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <div className="text-center mt-10">
+          <Button variant="outline" className="px-8">
+            View All Vehicles
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default FeaturedVehicles;
