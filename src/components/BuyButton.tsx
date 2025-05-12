@@ -4,13 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import AuthPrompt from "./AuthPrompt";
+import { toast } from "@/hooks/use-toast";
 
 interface BuyButtonProps {
   vehicleId: number;
   price: string;
+  title: string;
 }
 
-const BuyButton = ({ vehicleId, price }: BuyButtonProps) => {
+const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   const navigate = useNavigate();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   
@@ -19,8 +21,13 @@ const BuyButton = ({ vehicleId, price }: BuyButtonProps) => {
     
     if (userEmail) {
       // User is logged in, proceed to payment
+      toast({
+        title: "Processing Purchase",
+        description: `Preparing ${title} for checkout`
+      });
+      
       navigate("/payment", { 
-        state: { vehicleId, price } 
+        state: { vehicleId, price, title } 
       });
     } else {
       // User is not logged in, show auth prompt
