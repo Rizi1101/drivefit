@@ -41,15 +41,22 @@ const SignIn = () => {
     // In a real app, this would call an authentication API
     console.log("Sign in values:", values);
     
-    // Simulate successful login
+    // Determine if user is admin or regular user based on email
+    // In a real application, this would be determined by the backend
+    const isAdmin = values.email === "admin@drivefit.com";
+    
     toast({
       title: "Sign in successful",
       description: "Welcome back to DriveFit!",
     });
     
-    // Redirect to home page after successful login
+    // Redirect to appropriate dashboard based on role
     setTimeout(() => {
-      navigate("/");
+      if (isAdmin) {
+        navigate("/admin");
+      } else {
+        navigate("/user-dashboard");
+      }
     }, 1500);
   };
 
@@ -154,6 +161,11 @@ const SignIn = () => {
                       Sign up
                     </Link>
                   </p>
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-xs text-gray-500 mb-2">For testing purposes:</p>
+                    <p className="text-xs text-gray-500">Admin: admin@drivefit.com / password123</p>
+                    <p className="text-xs text-gray-500">User: user@drivefit.com / password123</p>
+                  </div>
                 </div>
               </form>
             </Form>

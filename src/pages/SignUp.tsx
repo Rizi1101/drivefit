@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const signUpSchema = z.object({
   fullName: z.string().min(2, {
@@ -27,6 +28,9 @@ const signUpSchema = z.object({
     message: "Password must be at least 6 characters",
   }),
   confirmPassword: z.string(),
+  userType: z.enum(["buyer", "seller", "both"], {
+    required_error: "Please select a user type",
+  }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -47,6 +51,7 @@ const SignUp = () => {
       phone: "",
       password: "",
       confirmPassword: "",
+      userType: "both",
     },
   });
 
@@ -122,6 +127,37 @@ const SignUp = () => {
                           placeholder="+92 300 1234567" 
                           {...field} 
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="userType"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>I want to</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="buyer" id="buyer" />
+                            <FormLabel htmlFor="buyer" className="font-normal cursor-pointer">Buy vehicles</FormLabel>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="seller" id="seller" />
+                            <FormLabel htmlFor="seller" className="font-normal cursor-pointer">Sell vehicles</FormLabel>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="both" id="both" />
+                            <FormLabel htmlFor="both" className="font-normal cursor-pointer">Both buy and sell</FormLabel>
+                          </div>
+                        </RadioGroup>
                       </FormControl>
                       <FormMessage />
                     </FormItem>

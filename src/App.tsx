@@ -16,6 +16,7 @@ import VehicleDetail from "./pages/VehicleDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import PaymentPage from "./pages/PaymentPage";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import UserDashboard from "./pages/UserDashboard";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/vehicles" element={<VehicleSearch />} />
           <Route path="/vehicles/:id" element={<VehicleDetail />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/user-dashboard" element={<UserDashboard />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

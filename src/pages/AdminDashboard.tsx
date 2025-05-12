@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -18,6 +17,15 @@ type Vehicle = {
   status: "active" | "pending" | "sold";
   seller: string;
   dateAdded: string;
+};
+
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  userType: "buyer" | "seller" | "both";
+  joined: string;
 };
 
 const AdminDashboard = () => {
@@ -81,11 +89,12 @@ const AdminDashboard = () => {
     },
   ]);
 
-  const [users, setUsers] = useState([
-    { id: 1, name: "Ahmed Khan", email: "ahmed@example.com", role: "user", joined: "2023-04-10" },
-    { id: 2, name: "Fatima Ali", email: "fatima@example.com", role: "user", joined: "2023-04-15" },
-    { id: 3, name: "Bilal Ahmed", email: "bilal@example.com", role: "admin", joined: "2023-03-20" },
-    { id: 4, name: "Sara Malik", email: "sara@example.com", role: "user", joined: "2023-05-01" },
+  const [users, setUsers] = useState<User[]>([
+    { id: 1, name: "Ahmed Khan", email: "ahmed@example.com", role: "user", userType: "buyer", joined: "2023-04-10" },
+    { id: 2, name: "Fatima Ali", email: "fatima@example.com", role: "user", userType: "seller", joined: "2023-04-15" },
+    { id: 3, name: "Bilal Ahmed", email: "bilal@example.com", role: "admin", userType: "both", joined: "2023-03-20" },
+    { id: 4, name: "Sara Malik", email: "sara@example.com", role: "user", userType: "both", joined: "2023-05-01" },
+    { id: 5, name: "Rizwan Qamar", email: "rizwanqamar889@gmail.com", role: "user", userType: "both", joined: "2023-05-12" },
   ]);
 
   const approveVehicle = (id: number) => {
@@ -145,7 +154,7 @@ const AdminDashboard = () => {
               <CardDescription>Active vehicle listings</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{vehicles.filter(v => v.status === "active").length}</p>
+              <p className="text-4xl font-bold">{3}</p>
               <p className="text-sm text-muted-foreground">+2 from last week</p>
             </CardContent>
           </Card>
@@ -157,7 +166,7 @@ const AdminDashboard = () => {
             </CardHeader>
             <CardContent>
               <p className="text-4xl font-bold">{users.length}</p>
-              <p className="text-sm text-muted-foreground">+5 from last week</p>
+              <p className="text-sm text-muted-foreground">+1 new today</p>
             </CardContent>
           </Card>
           
@@ -349,6 +358,7 @@ const AdminDashboard = () => {
                         <th className="text-left py-3 px-4">Name</th>
                         <th className="text-left py-3 px-4">Email</th>
                         <th className="text-left py-3 px-4">Role</th>
+                        <th className="text-left py-3 px-4">Type</th>
                         <th className="text-left py-3 px-4">Joined</th>
                         <th className="text-left py-3 px-4">Actions</th>
                       </tr>
@@ -366,6 +376,17 @@ const AdminDashboard = () => {
                                 : "bg-gray-100 text-gray-800"
                             }`}>
                               {user.role}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4">
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+                              user.userType === "both" 
+                                ? "bg-blue-100 text-blue-800" 
+                                : user.userType === "seller"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}>
+                              {user.userType}
                             </span>
                           </td>
                           <td className="py-3 px-4">{user.joined}</td>
