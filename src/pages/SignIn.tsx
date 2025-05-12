@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,6 +39,9 @@ const SignIn = () => {
   const onSubmit = (values: SignInValues) => {
     // In a real app, this would call an authentication API
     console.log("Sign in values:", values);
+    
+    // Store the email in localStorage to maintain session
+    localStorage.setItem("userEmail", values.email);
     
     // Determine if user is admin or regular user based on email
     // In a real application, this would be determined by the backend
