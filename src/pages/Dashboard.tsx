@@ -10,6 +10,7 @@ const Dashboard = () => {
   useEffect(() => {
     // Check authentication status
     const userEmail = localStorage.getItem("userEmail");
+    const userType = localStorage.getItem("userType");
     
     if (!userEmail) {
       navigate("/signin");
@@ -22,7 +23,7 @@ const Dashboard = () => {
     // Add a small delay to show loading state
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 500);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [navigate]);

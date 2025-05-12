@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Heart, Share2, Phone, Mail, Calendar, Car, MapPin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import BuyButton from "@/components/BuyButton";
 
 // Mock vehicle data
 const vehicleData = {
@@ -36,21 +37,21 @@ const vehicleData = {
   relatedVehicles: [
     {
       id: 2,
-      title: "2021 Honda Civic Oriel",
+      title: "2024 Honda Civic Oriel",
       price: "PKR 5,350,000",
       location: "Lahore, Punjab",
       image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f37?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
     },
     {
       id: 3,
-      title: "2020 Toyota Corolla Altis",
+      title: "2025 Toyota Corolla Altis",
       price: "PKR 4,200,000",
       location: "Islamabad, Federal",
       image: "https://images.unsplash.com/photo-1549399542-7e38e2ee9233?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
     },
     {
       id: 4,
-      title: "2021 Honda City 1.5L",
+      title: "2024 Honda City 1.5L",
       price: "PKR 3,950,000",
       location: "Karachi, Sindh",
       image: "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
@@ -190,6 +191,13 @@ const VehicleDetail = () => {
                   <p className="text-gray-600 flex items-center mt-2">
                     <MapPin size={16} className="mr-1" /> {vehicleData.location}
                   </p>
+                  <div className="mt-4">
+                    <BuyButton 
+                      vehicleId={Number(id) || 1} 
+                      price={vehicleData.price} 
+                      title={vehicleData.title} 
+                    />
+                  </div>
                 </div>
               </Card>
               

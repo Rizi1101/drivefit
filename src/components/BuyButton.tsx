@@ -18,17 +18,28 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   
   const handleBuyClick = () => {
     const userEmail = localStorage.getItem("userEmail");
+    const userType = localStorage.getItem("userType");
     
     if (userEmail) {
-      // User is logged in, proceed to payment
-      toast({
-        title: "Processing Purchase",
-        description: `Preparing ${title} for checkout`
-      });
-      
-      navigate("/payment", { 
-        state: { vehicleId, price, title } 
-      });
+      // Check if user is a buyer or both
+      if (userType === "buyer" || userType === "both") {
+        // User is logged in and can buy, proceed to payment
+        toast({
+          title: "Processing Purchase",
+          description: `Preparing ${title} for checkout`
+        });
+        
+        navigate("/payment", { 
+          state: { vehicleId, price, title } 
+        });
+      } else {
+        // User is logged in but is a seller only
+        toast({
+          title: "Account Type Restriction",
+          description: "You need a buyer account to purchase vehicles",
+          variant: "destructive"
+        });
+      }
     } else {
       // User is not logged in, show auth prompt
       setShowAuthPrompt(true);

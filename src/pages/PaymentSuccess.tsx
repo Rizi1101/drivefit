@@ -1,16 +1,41 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const transactionId = "TXN" + Math.floor(Math.random() * 1000000);
   const date = new Date().toLocaleDateString("en-PK");
+  
+  // Get payment data from state or use default values
+  const vehicleData = location.state?.vehicleData || {
+    title: "Vehicle Purchase",
+    price: "PKR 3,000"
+  };
+  
+  useEffect(() => {
+    // In a real app, we would update the database with the transaction
+    // This would include updating the vehicle status as sold and recording the transaction
+    
+    const userEmail = localStorage.getItem("userEmail");
+    if (userEmail) {
+      // Record transaction in user's account
+      console.log("Recording transaction for user:", userEmail);
+    }
+    
+    // Show success notification
+    toast({
+      title: "Transaction Completed",
+      description: "Your vehicle purchase was successful",
+    });
+  }, []);
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -40,8 +65,12 @@ const PaymentSuccess = () => {
                 <span className="font-medium">{date}</span>
               </div>
               <div className="flex justify-between">
+                <span className="text-sm text-gray-500">Vehicle:</span>
+                <span className="font-medium">{vehicleData.title || "Vehicle Purchase"}</span>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Amount:</span>
-                <span className="font-medium">PKR 3,000</span>
+                <span className="font-medium">{vehicleData.price || "PKR 3,000"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Payment Method:</span>
@@ -59,7 +88,7 @@ const PaymentSuccess = () => {
               <Button 
                 variant="outline" 
                 className="w-full"
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate("/user-dashboard")}
               >
                 View My Account
               </Button>
