@@ -19,10 +19,22 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Check user type on component mount
-    const storedUserType = localStorage.getItem("userType");
-    setUserType(storedUserType);
-    setIsLoading(false);
+    // Check user type on component mount and whenever it might change
+    const checkUserType = () => {
+      const storedUserType = localStorage.getItem("userType");
+      console.log("Current user type:", storedUserType);
+      setUserType(storedUserType);
+      setIsLoading(false);
+    };
+    
+    checkUserType();
+    
+    // Add event listener for storage changes (in case user updates profile in another tab)
+    window.addEventListener('storage', checkUserType);
+    
+    return () => {
+      window.removeEventListener('storage', checkUserType);
+    };
   }, []);
   
   const handleBuyClick = () => {
@@ -35,6 +47,7 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
     }
     
     // Check if user is a buyer or both
+    console.log("Attempting purchase with user type:", userType);
     if (userType === "buyer" || userType === "both") {
       // User is logged in and can buy, proceed to payment
       toast({

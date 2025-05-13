@@ -87,7 +87,7 @@ const UserDashboard = () => {
     name: "User",
     email: "",
     phone: "+92-XXX-XXXXXXX",
-    userType: "both",
+    userType: "buyer", // Default to buyer, not both
     joinedDate: "May 2023"
   });
 
@@ -95,13 +95,15 @@ const UserDashboard = () => {
     // Check if user is logged in
     const userEmail = localStorage.getItem("userEmail");
     const userName = localStorage.getItem("userName") || "User";
-    const userType = localStorage.getItem("userType") || "buyer"; // Default to buyer not both
+    const userType = localStorage.getItem("userType") || "buyer"; // Default to buyer
     const userPhone = localStorage.getItem("userPhone") || "+92-XXX-XXXXXXX";
     
     if (!userEmail) {
       navigate("/signin");
       return;
     }
+    
+    console.log("UserDashboard loaded with user type:", userType);
     
     // Update user info
     setUserInfo({
@@ -157,10 +159,21 @@ const UserDashboard = () => {
     const newName = formData.get("name") as string;
     const newPhone = formData.get("phone") as string;
     
+    if (!['buyer', 'seller', 'both'].includes(newUserType)) {
+      toast({
+        title: "Invalid user type",
+        description: "Please select a valid user type",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     // Save to localStorage
     localStorage.setItem("userType", newUserType);
     localStorage.setItem("userName", newName);
     localStorage.setItem("userPhone", newPhone);
+    
+    console.log("User settings updated, new user type:", newUserType);
     
     // Update state
     setUserInfo({
@@ -563,6 +576,7 @@ const UserDashboard = () => {
                   type="text" 
                   className="w-full p-2 border rounded" 
                   defaultValue={userInfo.name}
+                  required
                 />
               </div>
               <div>
@@ -585,6 +599,7 @@ const UserDashboard = () => {
                   type="text" 
                   className="w-full p-2 border rounded" 
                   defaultValue={userInfo.phone}
+                  required
                 />
               </div>
               <div>
@@ -594,6 +609,7 @@ const UserDashboard = () => {
                   name="userType"
                   className="w-full p-2 border rounded" 
                   defaultValue={userInfo.userType}
+                  required
                 >
                   <option value="buyer">Buyer</option>
                   <option value="seller">Seller</option>

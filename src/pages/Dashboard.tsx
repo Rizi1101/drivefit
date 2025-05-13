@@ -1,28 +1,40 @@
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Loader } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
     // Check authentication status
     const userEmail = localStorage.getItem("userEmail");
-    const userType = localStorage.getItem("userType");
     
     if (!userEmail) {
       navigate("/signin");
     } else if (userEmail === "admin@drivefit.com") {
       navigate("/admin");
     } else {
+      // Get current userType from localStorage
+      let userType = localStorage.getItem("userType");
+      
       // Update localStorage with current userType if it exists in the URL state
       const urlParams = new URLSearchParams(window.location.search);
       const typeFromUrl = urlParams.get('type');
       
       if (typeFromUrl && ['buyer', 'seller', 'both'].includes(typeFromUrl)) {
+        userType = typeFromUrl;
         localStorage.setItem("userType", typeFromUrl);
+        console.log("Setting user type from URL:", typeFromUrl);
+      }
+      
+      // If no user type is set, default to buyer (not both)
+      if (!userType) {
+        userType = "buyer";
+        localStorage.setItem("userType", userType);
+        console.log("No user type found, defaulting to:", userType);
       }
       
       navigate("/user-dashboard");
