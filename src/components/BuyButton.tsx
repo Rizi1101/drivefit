@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
@@ -15,34 +15,43 @@ interface BuyButtonProps {
 const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   const navigate = useNavigate();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [userType, setUserType] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    // Check user type on component mount
+    const storedUserType = localStorage.getItem("userType");
+    setUserType(storedUserType);
+    setIsLoading(false);
+  }, []);
   
   const handleBuyClick = () => {
     const userEmail = localStorage.getItem("userEmail");
-    const userType = localStorage.getItem("userType");
     
-    if (userEmail) {
-      // Check if user is a buyer or both
-      if (userType === "buyer" || userType === "both") {
-        // User is logged in and can buy, proceed to payment
-        toast({
-          title: "Processing Purchase",
-          description: `Preparing ${title} for checkout`
-        });
-        
-        navigate("/payment", { 
-          state: { vehicleId, price, title } 
-        });
-      } else {
-        // User is logged in but is a seller only
-        toast({
-          title: "Account Type Restriction",
-          description: "You need a buyer account to purchase vehicles",
-          variant: "destructive"
-        });
-      }
-    } else {
+    if (!userEmail) {
       // User is not logged in, show auth prompt
       setShowAuthPrompt(true);
+      return;
+    }
+    
+    // Check if user is a buyer or both
+    if (userType === "buyer" || userType === "both") {
+      // User is logged in and can buy, proceed to payment
+      toast({
+        title: "Processing Purchase",
+        description: `Preparing ${title} for checkout`
+      });
+      
+      navigate("/payment", { 
+        state: { vehicleId, price, title } 
+      });
+    } else {
+      // User is logged in but is a seller only
+      toast({
+        title: "Account Type Restriction",
+        description: "You need a buyer account to purchase vehicles",
+        variant: "destructive"
+      });
     }
   };
   
@@ -50,6 +59,7 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
     <>
       <Button 
         onClick={handleBuyClick} 
+        disabled={isLoading}
         className="w-full bg-drivefit-blue hover:bg-drivefit-blue/90 text-white py-3 px-4 rounded flex items-center justify-center"
       >
         <ShoppingCart className="mr-2 h-5 w-5" />

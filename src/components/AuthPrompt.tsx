@@ -25,9 +25,12 @@ const AuthPrompt = ({ isOpen, onClose, action }: AuthPromptProps) => {
   };
   
   const handleSignUp = () => {
+    // Set the user type based on action
+    const userType = action === "buy" ? "buyer" : "seller";
+    
     navigate("/signup", { 
       state: { 
-        preSelectedUserType: action === "buy" ? "buyer" : "seller",
+        preSelectedUserType: userType,
         redirectAfterSignup: true
       } 
     });

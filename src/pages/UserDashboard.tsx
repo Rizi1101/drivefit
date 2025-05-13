@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -96,7 +95,7 @@ const UserDashboard = () => {
     // Check if user is logged in
     const userEmail = localStorage.getItem("userEmail");
     const userName = localStorage.getItem("userName") || "User";
-    const userType = localStorage.getItem("userType") || "both";
+    const userType = localStorage.getItem("userType") || "buyer"; // Default to buyer not both
     const userPhone = localStorage.getItem("userPhone") || "+92-XXX-XXXXXXX";
     
     if (!userEmail) {
@@ -152,11 +151,30 @@ const UserDashboard = () => {
 
   const updateUserSettings = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send the updated settings to the backend
+    
+    const formData = new FormData(e.target as HTMLFormElement);
+    const newUserType = formData.get("userType") as string;
+    const newName = formData.get("name") as string;
+    const newPhone = formData.get("phone") as string;
+    
+    // Save to localStorage
+    localStorage.setItem("userType", newUserType);
+    localStorage.setItem("userName", newName);
+    localStorage.setItem("userPhone", newPhone);
+    
+    // Update state
+    setUserInfo({
+      ...userInfo,
+      name: newName,
+      phone: newPhone,
+      userType: newUserType
+    });
+    
     toast({
       title: "Settings Updated",
       description: "Your account settings have been updated successfully",
     });
+    
     setIsSettingsOpen(false);
   };
 
@@ -541,6 +559,7 @@ const UserDashboard = () => {
                 <label htmlFor="name" className="block text-sm font-medium mb-1">Full Name</label>
                 <input 
                   id="name"
+                  name="name"
                   type="text" 
                   className="w-full p-2 border rounded" 
                   defaultValue={userInfo.name}
@@ -550,6 +569,7 @@ const UserDashboard = () => {
                 <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
                 <input 
                   id="email"
+                  name="email"
                   type="email" 
                   className="w-full p-2 border rounded" 
                   defaultValue={userInfo.email}
@@ -561,6 +581,7 @@ const UserDashboard = () => {
                 <label htmlFor="phone" className="block text-sm font-medium mb-1">Phone Number</label>
                 <input 
                   id="phone"
+                  name="phone"
                   type="text" 
                   className="w-full p-2 border rounded" 
                   defaultValue={userInfo.phone}
@@ -570,6 +591,7 @@ const UserDashboard = () => {
                 <label htmlFor="userType" className="block text-sm font-medium mb-1">Account Type</label>
                 <select 
                   id="userType"
+                  name="userType"
                   className="w-full p-2 border rounded" 
                   defaultValue={userInfo.userType}
                 >

@@ -17,6 +17,14 @@ const Dashboard = () => {
     } else if (userEmail === "admin@drivefit.com") {
       navigate("/admin");
     } else {
+      // Update localStorage with current userType if it exists in the URL state
+      const urlParams = new URLSearchParams(window.location.search);
+      const typeFromUrl = urlParams.get('type');
+      
+      if (typeFromUrl && ['buyer', 'seller', 'both'].includes(typeFromUrl)) {
+        localStorage.setItem("userType", typeFromUrl);
+      }
+      
       navigate("/user-dashboard");
     }
 
