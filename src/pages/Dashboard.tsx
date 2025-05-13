@@ -14,31 +14,34 @@ const Dashboard = () => {
     
     if (!userEmail) {
       navigate("/signin");
-    } else if (userEmail === "admin@drivefit.com") {
+      return;
+    } 
+    
+    if (userEmail === "admin@drivefit.com") {
       navigate("/admin");
-    } else {
-      // Get current userType from localStorage
-      let userType = localStorage.getItem("userType");
-      
-      // Update localStorage with current userType if it exists in the URL state
-      const urlParams = new URLSearchParams(window.location.search);
-      const typeFromUrl = urlParams.get('type');
-      
-      if (typeFromUrl && ['buyer', 'seller', 'both'].includes(typeFromUrl)) {
-        userType = typeFromUrl;
-        localStorage.setItem("userType", typeFromUrl);
-        console.log("Setting user type from URL:", typeFromUrl);
-      }
-      
-      // If no user type is set, default to buyer (not both)
-      if (!userType) {
-        userType = "buyer";
-        localStorage.setItem("userType", userType);
-        console.log("No user type found, defaulting to:", userType);
-      }
-      
-      navigate("/user-dashboard");
+      return;
     }
+    
+    // Get current userType from localStorage
+    let userType = localStorage.getItem("userType");
+    
+    // Update localStorage with userType from URL state if provided
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeFromUrl = urlParams.get('type');
+    
+    if (typeFromUrl && ['buyer', 'seller', 'both'].includes(typeFromUrl)) {
+      userType = typeFromUrl;
+      localStorage.setItem("userType", typeFromUrl);
+      console.log("Setting user type from URL:", typeFromUrl);
+    }
+    
+    // If no user type is set, don't set a default
+    // Let the user choose their account type in the dashboard
+    if (!userType) {
+      console.log("No user type found, user will need to select one");
+    }
+    
+    navigate("/user-dashboard");
 
     // Add a small delay to show loading state
     const timer = setTimeout(() => {

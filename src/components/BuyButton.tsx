@@ -16,40 +16,41 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   const navigate = useNavigate();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Check user type on component mount and whenever it might change
-    const checkUserType = () => {
-      const storedUserType = localStorage.getItem("userType");
-      console.log("Current user type:", storedUserType);
-      setUserType(storedUserType);
+    // Check authentication status and user type on component mount
+    const checkUserAuth = () => {
+      const email = localStorage.getItem("userEmail");
+      const type = localStorage.getItem("userType");
+      
+      setUserEmail(email);
+      setUserType(type);
       setIsLoading(false);
+      
+      console.log("Auth check - Email:", email, "Type:", type);
     };
     
-    checkUserType();
+    checkUserAuth();
     
-    // Add event listener for storage changes (in case user updates profile in another tab)
-    window.addEventListener('storage', checkUserType);
+    // Listen for changes in localStorage (in case user updates profile in another tab)
+    window.addEventListener('storage', checkUserAuth);
     
     return () => {
-      window.removeEventListener('storage', checkUserType);
+      window.removeEventListener('storage', checkUserAuth);
     };
   }, []);
   
   const handleBuyClick = () => {
-    const userEmail = localStorage.getItem("userEmail");
-    
+    // If not logged in, show auth prompt
     if (!userEmail) {
-      // User is not logged in, show auth prompt
       setShowAuthPrompt(true);
       return;
     }
     
-    // Check if user is a buyer or both
-    console.log("Attempting purchase with user type:", userType);
+    // Check if user is a buyer or has dual role
     if (userType === "buyer" || userType === "both") {
-      // User is logged in and can buy, proceed to payment
       toast({
         title: "Processing Purchase",
         description: `Preparing ${title} for checkout`
@@ -59,7 +60,7 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
         state: { vehicleId, price, title } 
       });
     } else {
-      // User is logged in but is a seller only
+      // User is logged in but is a seller only - show restriction message
       toast({
         title: "Account Type Restriction",
         description: "You need a buyer account to purchase vehicles",
