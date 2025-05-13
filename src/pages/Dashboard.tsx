@@ -54,9 +54,11 @@ const Dashboard = () => {
   // Show loading indicator while redirecting
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <Loader className="h-12 w-12 animate-spin text-drivefit-blue" />
-        <p className="mt-4 text-lg">Loading your dashboard...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-black to-drivefit-green/90">
+        <div className="glass-effect p-8 rounded-2xl animate-scale-in">
+          <Loader className="h-16 w-16 animate-spin text-white mx-auto" />
+          <p className="mt-6 text-xl text-white font-light">Loading your dashboard...</p>
+        </div>
       </div>
     );
   }
