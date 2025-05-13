@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -63,15 +62,15 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-black to-drivefit-green/90">
       <Navbar />
       
-      <div className="flex-grow flex items-center justify-center bg-drivefit-gray py-12">
-        <div className="w-full max-w-md px-4">
-          <Card className="p-8">
+      <div className="flex-grow flex items-center justify-center py-12">
+        <div className="w-full max-w-md px-4 animate-fade-in">
+          <div className="glass-effect p-8 rounded-xl shadow-2xl">
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold">Welcome Back</h1>
-              <p className="text-gray-600 mt-2">Sign in to your DriveFit account</p>
+              <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
+              <p className="text-gray-300 mt-2">Sign in to your DriveFit account</p>
             </div>
             
             <Form {...form}>
@@ -81,11 +80,12 @@ const SignIn = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className="text-white">Email</FormLabel>
                       <FormControl>
                         <Input
                           type="email"
                           placeholder="email@example.com"
+                          className="bg-black/30 border-white/20 text-white placeholder:text-gray-400"
                           {...field}
                         />
                       </FormControl>
@@ -99,19 +99,20 @@ const SignIn = () => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel className="text-white">Password</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
                             type={showPassword ? "text" : "password"}
                             placeholder="••••••••"
+                            className="bg-black/30 border-white/20 text-white placeholder:text-gray-400"
                             {...field}
                           />
                           <Button
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="absolute right-0 top-0 h-full px-3"
+                            className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? (
@@ -132,11 +133,11 @@ const SignIn = () => {
                     <input
                       type="checkbox"
                       id="remember-me"
-                      className="h-4 w-4 rounded border-gray-300 text-drivefit-blue focus:ring-drivefit-blue"
+                      className="h-4 w-4 rounded border-gray-300 bg-black/30 text-drivefit-green focus:ring-drivefit-green"
                     />
                     <label
                       htmlFor="remember-me"
-                      className="ml-2 block text-sm text-gray-700"
+                      className="ml-2 block text-sm text-gray-300"
                     >
                       Remember me
                     </label>
@@ -145,33 +146,33 @@ const SignIn = () => {
                   <div className="text-sm">
                     <Link
                       to="/forgot-password"
-                      className="text-drivefit-blue hover:underline"
+                      className="text-drivefit-green hover:text-white transition-colors"
                     >
                       Forgot password?
                     </Link>
                   </div>
                 </div>
                 
-                <Button type="submit" className="w-full bg-drivefit-blue hover:bg-drivefit-blue/90">
+                <Button type="submit" className="w-full bg-drivefit-green hover:bg-drivefit-green/80 transition-all duration-300 transform hover:scale-[1.02]">
                   Sign In
                 </Button>
                 
                 <div className="text-center mt-4">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-300">
                     Don't have an account?{" "}
-                    <Link to="/signup" className="text-drivefit-red hover:underline">
+                    <Link to="/signup" className="text-drivefit-green hover:text-white transition-colors">
                       Sign up
                     </Link>
                   </p>
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-xs text-gray-500 mb-2">For testing purposes:</p>
-                    <p className="text-xs text-gray-500">Admin: admin@drivefit.com / password123</p>
-                    <p className="text-xs text-gray-500">User: user@drivefit.com / password123</p>
+                  <div className="mt-4 pt-4 border-t border-gray-700">
+                    <p className="text-xs text-gray-400 mb-2">For testing purposes:</p>
+                    <p className="text-xs text-gray-400">Admin: admin@drivefit.com / password123</p>
+                    <p className="text-xs text-gray-400">User: user@drivefit.com / password123</p>
                   </div>
                 </div>
               </form>
             </Form>
-          </Card>
+          </div>
         </div>
       </div>
       
