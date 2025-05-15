@@ -1,311 +1,300 @@
 
-import { useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Heart, Share2, Phone, Mail, Calendar, Car, MapPin } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
 import BuyButton from "@/components/BuyButton";
-
-// Mock vehicle data
-const vehicleData = {
-  id: 1,
-  title: "2022 Toyota Corolla GLi",
-  description: "This Toyota Corolla GLi is in excellent condition with low mileage. It comes with all standard features and has been well maintained. The car has a powerful 1800cc engine with automatic transmission, providing a smooth driving experience. Perfect for family use or daily commute.",
-  price: "PKR 4,850,000",
-  location: "Karachi, Sindh",
-  mileage: "15,300 km",
-  year: "2022",
-  engineCapacity: "1800 cc",
-  transmission: "Automatic",
-  color: "White",
-  registeredIn: "Karachi",
-  assembly: "Local",
-  fuelType: "Petrol",
-  features: ["Power Steering", "Power Windows", "Air Conditioning", "ABS", "Airbags", "Navigation", "Alloy Wheels", "Keyless Entry"],
-  sellerName: "Ahmed Khan",
-  sellerPhone: "+92-300-1234567",
-  sellerEmail: "ahmed@example.com",
-  sellerLocation: "DHA Phase 6, Karachi",
-  images: [
-    "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-    "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2064&q=80",
-    "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-  ],
-  relatedVehicles: [
-    {
-      id: 2,
-      title: "2024 Honda Civic Oriel",
-      price: "PKR 5,350,000",
-      location: "Lahore, Punjab",
-      image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f37?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-    },
-    {
-      id: 3,
-      title: "2025 Toyota Corolla Altis",
-      price: "PKR 4,200,000",
-      location: "Islamabad, Federal",
-      image: "https://images.unsplash.com/photo-1549399542-7e38e2ee9233?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-    },
-    {
-      id: 4,
-      title: "2024 Honda City 1.5L",
-      price: "PKR 3,950,000",
-      location: "Karachi, Sindh",
-      image: "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-    }
-  ]
-};
+import CarView3D from "@/components/CarView3D";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
+import { Heart, Car, Share, Info, MessageCircle } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const VehicleDetail = () => {
-  const { id } = useParams();
-  const [activeImage, setActiveImage] = useState(0);
-  const [isFavorite, setIsFavorite] = useState(false);
-  
-  // In a real app, we would fetch the vehicle data based on the ID
-  console.log("Vehicle ID:", id);
-  
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
+  const { id } = useParams<{ id: string }>();
+  const [vehicle, setVehicle] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [activeView, setActiveView] = useState<"images" | "3d">("images");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    // In a real app, this would fetch from API using the ID
+    // For now, using mock data
+    const mockVehicle = {
+      id: Number(id) || 1,
+      title: "2024 Toyota Camry XLE V6",
+      price: "PKR 8,950,000",
+      year: 2024,
+      mileage: "15,000 km",
+      location: "Islamabad, Pakistan",
+      fuelType: "Petrol",
+      transmission: "Automatic",
+      color: "Pearl White",
+      engineSize: "3.5L V6",
+      features: [
+        "Leather Interior",
+        "Sunroof",
+        "Navigation System",
+        "Blind Spot Monitor",
+        "Adaptive Cruise Control",
+        "360° Camera",
+        "Lane Keeping Assist",
+        "Heated and Ventilated Seats"
+      ],
+      description: "This beautiful 2024 Toyota Camry XLE is in pristine condition with only 15,000 km on the odometer. Powered by a smooth 3.5L V6 engine, it offers excellent performance while maintaining good fuel economy. The Pearl White exterior is complemented by a luxurious beige leather interior. This vehicle comes loaded with premium features including a panoramic sunroof, JBL sound system, and Toyota's latest safety suite. Service history is complete and the vehicle is under manufacturer warranty until 2027. Perfect family sedan with ample space and comfort for long drives.",
+      sellerInfo: {
+        name: "Ahmed Khan",
+        rating: 4.8,
+        memberSince: "2022",
+        phone: "+92 301 2345678",
+        email: "ahmed.k@email.com"
+      },
+      images: [
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+        "https://images.unsplash.com/photo-1605816988069-b11dde457f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1471&q=80",
+        "https://images.unsplash.com/photo-1583267746897-2cf415887172?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
+        "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
+      ],
+      model3dPath: "https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/models/car-muscle/model.gltf"
+    };
+
+    setTimeout(() => {
+      setVehicle(mockVehicle);
+      setLoading(false);
+    }, 800);
+  }, [id]);
+
+  const handleFavorite = () => {
     toast({
-      title: isFavorite ? "Removed from favorites" : "Added to favorites",
-      description: `${vehicleData.title} has been ${isFavorite ? "removed from" : "added to"} your favorites`,
+      title: "Added to favorites",
+      description: `${vehicle.title} has been added to your favorites`,
     });
   };
-  
+
   const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
     toast({
-      title: "Share vehicle",
-      description: "Sharing options opened",
+      title: "Link copied",
+      description: "Vehicle listing link copied to clipboard",
     });
   };
-  
-  const handleContact = (method: string) => {
+
+  const handleContactSeller = () => {
     toast({
-      title: "Contact seller",
-      description: `Contacting seller via ${method}`,
+      title: "Contact request sent",
+      description: "The seller will contact you soon",
     });
   };
-  
-  const handleViewRelated = (title: string) => {
-    toast({
-      title: "Related vehicle",
-      description: `Viewing ${title}`,
-    });
+
+  const handleNextImage = () => {
+    if (vehicle && vehicle.images) {
+      setCurrentImageIndex((prev) => (prev + 1) % vehicle.images.length);
+    }
   };
+
+  const handlePrevImage = () => {
+    if (vehicle && vehicle.images) {
+      setCurrentImageIndex((prev) => (prev - 1 + vehicle.images.length) % vehicle.images.length);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-grow flex items-center justify-center">
+          <div className="w-16 h-16 border-4 border-royal-green border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!vehicle) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <div className="flex-grow flex flex-col items-center justify-center">
+          <h2 className="text-2xl font-bold">Vehicle Not Found</h2>
+          <p className="text-gray-600 mt-2">The vehicle you are looking for does not exist.</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <div className="flex-grow bg-drivefit-gray py-8">
-        <div className="container mx-auto px-4">
-          {/* Breadcrumb */}
-          <div className="flex items-center text-sm mb-6">
-            <Link to="/" className="text-gray-600 hover:text-drivefit-red">Home</Link>
-            <span className="mx-2">/</span>
-            <Link to="/vehicles" className="text-gray-600 hover:text-drivefit-red">Vehicles</Link>
-            <span className="mx-2">/</span>
-            <span className="text-drivefit-red">{vehicleData.title}</span>
-          </div>
-          
-          {/* Vehicle title and actions */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-            <h1 className="text-3xl font-bold mb-2 md:mb-0">{vehicleData.title}</h1>
-            <div className="flex space-x-2">
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <div className="bg-black/50 backdrop-blur-lg shadow-lg rounded-xl overflow-hidden border border-royal-green/20 animate-fade-in">
+          <div className="p-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+              <h1 className="text-2xl md:text-3xl font-bold text-gradient">{vehicle.title}</h1>
+              <p className="text-xl md:text-2xl font-semibold text-royal-green">{vehicle.price}</p>
+            </div>
+            
+            <div className="flex flex-wrap gap-2 mb-6">
+              <span className="px-3 py-1 bg-royal-green/20 text-royal-green rounded-full text-sm">{vehicle.year}</span>
+              <span className="px-3 py-1 bg-royal-green/20 text-royal-green rounded-full text-sm">{vehicle.mileage}</span>
+              <span className="px-3 py-1 bg-royal-green/20 text-royal-green rounded-full text-sm">{vehicle.fuelType}</span>
+              <span className="px-3 py-1 bg-royal-green/20 text-royal-green rounded-full text-sm">{vehicle.transmission}</span>
+            </div>
+
+            <div className="flex mb-4 space-x-4">
               <Button 
                 variant="outline" 
-                className={isFavorite ? "bg-drivefit-red text-white" : ""}
-                onClick={toggleFavorite}
+                className={activeView === "images" ? "bg-royal-green text-white" : "bg-transparent"}
+                onClick={() => setActiveView("images")}
               >
-                <Heart className={`mr-2 h-5 w-5 ${isFavorite ? "fill-current" : ""}`} /> 
-                {isFavorite ? "Favorited" : "Add to Favorites"}
+                Images
               </Button>
-              <Button variant="outline" onClick={handleShare}>
-                <Share2 className="mr-2 h-5 w-5" /> Share
+              <Button 
+                variant="outline" 
+                className={activeView === "3d" ? "bg-royal-green text-white" : "bg-transparent"}
+                onClick={() => setActiveView("3d")}
+              >
+                3D View
               </Button>
             </div>
-          </div>
-          
-          {/* Main content */}
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Left column - Images */}
-            <div className="lg:w-2/3">
-              <Card className="overflow-hidden mb-6">
-                <div className="h-96 relative">
-                  <img 
-                    src={vehicleData.images[activeImage]} 
-                    alt={vehicleData.title} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-4 flex justify-center space-x-2">
-                  {vehicleData.images.map((image, index) => (
-                    <button 
-                      key={index}
-                      className={`w-20 h-20 border-2 ${activeImage === index ? "border-drivefit-red" : "border-transparent"}`}
-                      onClick={() => setActiveImage(index)}
-                    >
-                      <img 
-                        src={image} 
-                        alt={`${vehicleData.title} - Image ${index + 1}`} 
-                        className="w-full h-full object-cover"
+
+            <div className="mb-8 rounded-lg overflow-hidden">
+              {activeView === "images" ? (
+                <div className="relative">
+                  <AspectRatio ratio={16 / 9}>
+                    <img 
+                      src={vehicle.images[currentImageIndex]} 
+                      alt={`${vehicle.title} - image ${currentImageIndex + 1}`} 
+                      className="w-full h-full object-cover"
+                    />
+                  </AspectRatio>
+
+                  <button 
+                    onClick={handlePrevImage}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"
+                  >
+                    &#10094;
+                  </button>
+                  <button 
+                    onClick={handleNextImage}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"
+                  >
+                    &#10095;
+                  </button>
+                  
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                    {vehicle.images.map((_, index) => (
+                      <button 
+                        key={index} 
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`w-3 h-3 rounded-full ${
+                          index === currentImageIndex ? 'bg-royal-green' : 'bg-white/30'
+                        }`}
                       />
-                    </button>
-                  ))}
-                </div>
-              </Card>
-              
-              {/* Vehicle description */}
-              <Card className="mb-6">
-                <div className="p-6">
-                  <h2 className="text-xl font-bold mb-4">Description</h2>
-                  <p className="text-gray-700 mb-4">{vehicleData.description}</p>
-                </div>
-              </Card>
-              
-              {/* Vehicle features */}
-              <Card className="mb-6">
-                <div className="p-6">
-                  <h2 className="text-xl font-bold mb-4">Features</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {vehicleData.features.map((feature, index) => (
-                      <div key={index} className="flex items-center">
-                        <div className="w-2 h-2 bg-drivefit-red rounded-full mr-2"></div>
-                        <span>{feature}</span>
-                      </div>
                     ))}
                   </div>
                 </div>
-              </Card>
+              ) : (
+                <CarView3D modelPath={vehicle.model3dPath} carName={vehicle.title} />
+              )}
             </div>
-            
-            {/* Right column - Details and contact */}
-            <div className="lg:w-1/3">
-              {/* Price */}
-              <Card className="mb-6">
-                <div className="p-6">
-                  <h2 className="text-3xl font-bold text-drivefit-red">{vehicleData.price}</h2>
-                  <p className="text-gray-600 flex items-center mt-2">
-                    <MapPin size={16} className="mr-1" /> {vehicleData.location}
-                  </p>
-                  <div className="mt-4">
-                    <BuyButton 
-                      vehicleId={Number(id) || 1} 
-                      price={vehicleData.price} 
-                      title={vehicleData.title} 
-                    />
-                  </div>
-                </div>
-              </Card>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <Tabs defaultValue="details">
+                  <TabsList className="w-full mb-6">
+                    <TabsTrigger value="details" className="flex-1">Details</TabsTrigger>
+                    <TabsTrigger value="features" className="flex-1">Features</TabsTrigger>
+                    <TabsTrigger value="description" className="flex-1">Description</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="details" className="glass-card p-4 rounded-xl">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <h3 className="text-sm text-gray-300">Year</h3>
+                        <p className="font-medium">{vehicle.year}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm text-gray-300">Mileage</h3>
+                        <p className="font-medium">{vehicle.mileage}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm text-gray-300">Fuel Type</h3>
+                        <p className="font-medium">{vehicle.fuelType}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm text-gray-300">Transmission</h3>
+                        <p className="font-medium">{vehicle.transmission}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm text-gray-300">Color</h3>
+                        <p className="font-medium">{vehicle.color}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm text-gray-300">Engine</h3>
+                        <p className="font-medium">{vehicle.engineSize}</p>
+                      </div>
+                      <div>
+                        <h3 className="text-sm text-gray-300">Location</h3>
+                        <p className="font-medium">{vehicle.location}</p>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="features" className="glass-card p-4 rounded-xl">
+                    <ul className="grid grid-cols-2 gap-2">
+                      {vehicle.features.map((feature, index) => (
+                        <li key={index} className="flex items-center">
+                          <span className="w-2 h-2 bg-royal-green rounded-full mr-2"></span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </TabsContent>
+                  
+                  <TabsContent value="description" className="glass-card p-4 rounded-xl">
+                    <p className="whitespace-pre-line">{vehicle.description}</p>
+                  </TabsContent>
+                </Tabs>
+              </div>
               
-              {/* Vehicle details */}
-              <Card className="mb-6">
-                <div className="p-6">
-                  <h2 className="text-xl font-bold mb-4">Vehicle Details</h2>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-gray-600 text-sm">Make</span>
-                      <span className="font-medium">Toyota</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-gray-600 text-sm">Model</span>
-                      <span className="font-medium">Corolla GLi</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-gray-600 text-sm">Year</span>
-                      <span className="font-medium">{vehicleData.year}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-gray-600 text-sm">Mileage</span>
-                      <span className="font-medium">{vehicleData.mileage}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-gray-600 text-sm">Engine</span>
-                      <span className="font-medium">{vehicleData.engineCapacity}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-gray-600 text-sm">Transmission</span>
-                      <span className="font-medium">{vehicleData.transmission}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-gray-600 text-sm">Color</span>
-                      <span className="font-medium">{vehicleData.color}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-gray-600 text-sm">Assembly</span>
-                      <span className="font-medium">{vehicleData.assembly}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-gray-600 text-sm">Registered In</span>
-                      <span className="font-medium">{vehicleData.registeredIn}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-gray-600 text-sm">Fuel Type</span>
-                      <span className="font-medium">{vehicleData.fuelType}</span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-              
-              {/* Seller information */}
-              <Card className="mb-6">
-                <div className="p-6">
-                  <h2 className="text-xl font-bold mb-4">Seller Information</h2>
-                  <p className="font-medium text-lg mb-2">{vehicleData.sellerName}</p>
-                  <p className="text-gray-600 mb-4">{vehicleData.sellerLocation}</p>
-                  <div className="space-y-3">
-                    <Button 
-                      variant="outline" 
-                      className="w-full flex justify-center"
-                      onClick={() => handleContact("phone")}
-                    >
-                      <Phone className="mr-2 h-5 w-5" /> {vehicleData.sellerPhone}
-                    </Button>
-                    <Button 
-                      className="w-full bg-drivefit-red hover:bg-drivefit-red/90 text-white flex justify-center"
-                      onClick={() => handleContact("email")}
-                    >
-                      <Mail className="mr-2 h-5 w-5" /> Contact Seller
+              <div>
+                <div className="glass-card p-4 rounded-xl mb-6">
+                  <h3 className="font-semibold mb-4 flex items-center">
+                    <Info className="w-5 h-5 mr-2 text-royal-green" />
+                    Seller Information
+                  </h3>
+                  <div className="space-y-2">
+                    <p><span className="text-gray-300">Name:</span> {vehicle.sellerInfo.name}</p>
+                    <p><span className="text-gray-300">Rating:</span> {vehicle.sellerInfo.rating} / 5</p>
+                    <p><span className="text-gray-300">Member since:</span> {vehicle.sellerInfo.memberSince}</p>
+                    <Separator className="my-3 bg-gray-700" />
+                    <Button onClick={handleContactSeller} className="w-full mb-2 bg-royal-green hover:bg-royal-green/90">
+                      <MessageCircle className="mr-2 h-4 w-4" /> Contact Seller
                     </Button>
                   </div>
                 </div>
-              </Card>
-            </div>
-          </div>
-          
-          {/* Similar Vehicles */}
-          <div className="mt-12">
-            <h2 className="text-2xl font-bold mb-6">Similar Vehicles</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {vehicleData.relatedVehicles.map((vehicle) => (
-                <Card key={vehicle.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="h-48 relative">
-                    <img 
-                      src={vehicle.image} 
-                      alt={vehicle.title} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-medium mb-1">{vehicle.title}</h3>
-                    <p className="text-drivefit-red font-bold mb-2">{vehicle.price}</p>
-                    <p className="text-sm text-gray-500 mb-4">{vehicle.location}</p>
-                    <Button 
-                      className="w-full bg-drivefit-blue hover:bg-drivefit-blue/90 text-white"
-                      onClick={() => handleViewRelated(vehicle.title)}
-                    >
-                      View Details
+                
+                <div className="glass-card p-4 rounded-xl">
+                  <BuyButton vehicleId={vehicle.id} price={vehicle.price} title={vehicle.title} />
+                  
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <Button variant="outline" onClick={handleFavorite} className="border-royal-green/30">
+                      <Heart className="mr-2 h-4 w-4" /> Save
+                    </Button>
+                    <Button variant="outline" onClick={handleShare} className="border-royal-green/30">
+                      <Share className="mr-2 h-4 w-4" /> Share
                     </Button>
                   </div>
-                </Card>
-              ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
       
       <Footer />
     </div>

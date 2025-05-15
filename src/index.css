@@ -3,140 +3,93 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 154 77% 20%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 154 70% 25%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 154 77% 20%;
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 154 77% 20%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 154 77% 20%;
-  }
-
-  .dark {
-    --background: 0 0% 5%;
-    --foreground: 210 40% 98%;
-
-    --card: 0 0% 10%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 0 0% 10%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 154 70% 30%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 0 0% 15%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 154 70% 30%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 154 70% 30%;
-    --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 154 70% 30%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 154 70% 30%;
-  }
+:root {
+  --royal-green: #1E8B5A;
+  --royal-green-dark: #146642;
+  --royal-green-light: #3AAB79;
+  --royal-red: #FF4D4F;
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    @apply bg-black text-gray-100;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(30, 139, 90, 0.15) 0%, rgba(0, 0, 0, 0) 50%),
+      radial-gradient(circle at 0% 50%, rgba(30, 139, 90, 0.1) 0%, rgba(0, 0, 0, 0) 50%);
+    background-size: 100% 100%;
+    background-attachment: fixed;
   }
 }
 
 @layer components {
-  .glass-effect {
-    @apply bg-white bg-opacity-10 backdrop-blur-md border border-white border-opacity-20 shadow-lg;
-  }
-  
   .glass-card {
-    @apply bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl;
+    @apply backdrop-blur-xl bg-white/5 border border-white/10 shadow-xl;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   }
   
-  .glass-nav {
-    @apply bg-white/20 backdrop-blur-md border-b border-white/10;
+  .glass-input {
+    @apply bg-white/10 border border-white/20 focus:border-royal-green/50 focus:ring-royal-green/30 text-white;
   }
   
-  .nav-link {
-    @apply text-black hover:text-drivefit-green transition-colors duration-300;
+  .glass-button {
+    @apply backdrop-blur-xl border border-white/10;
+  }
+
+  .text-gradient {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(to right, #fff, #1E8B5A);
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
   }
   
-  .btn-primary {
-    @apply bg-drivefit-green text-white hover:bg-opacity-90 transition-all duration-300 font-medium;
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
   }
   
-  .btn-secondary {
-    @apply bg-black text-white hover:bg-opacity-80 transition-all duration-300 font-medium;
+  .animate-pulse-slow {
+    animation: pulseSlow 3s infinite;
   }
-  
-  .vehicle-card {
-    @apply relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.01];
-  }
-  
-  .vehicle-card-overlay {
-    @apply absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent text-white;
-  }
-  
-  .animate-enter {
-    @apply animate-fade-in;
-  }
-  
-  .animate-scale {
-    @apply animate-scale-in;
-  }
-  
+
   .hover-scale {
-    @apply transition-transform duration-300 hover:scale-105;
+    @apply transition-transform duration-200 ease-out;
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseSlow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
   }
 }
