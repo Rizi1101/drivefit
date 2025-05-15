@@ -92,13 +92,10 @@ const CarView3D = ({
           
           <OrbitControls 
             makeDefault
-            enableDamping
-            dampingFactor={0.05}
             minDistance={4}
             maxDistance={9}
-            enableZoom
-            enablePan={false}
             enabled={!autoRotate}
+            enablePan={false}
           />
         </Canvas>
       </div>
