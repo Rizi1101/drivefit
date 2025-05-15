@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,6 @@ type SignInValues = z.infer<typeof signInSchema>;
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
@@ -44,9 +43,6 @@ const SignIn = () => {
     // Store the email in localStorage to maintain session
     localStorage.setItem("userEmail", values.email);
     
-    // Get saved redirect path
-    const redirectPath = localStorage.getItem("redirectPath");
-    
     // Determine if user is admin or regular user based on email
     // In a real application, this would be determined by the backend
     const isAdmin = values.email === "admin@drivefit.com";
@@ -56,30 +52,26 @@ const SignIn = () => {
       description: "Welcome back to DriveFit!",
     });
     
-    // Use a short timeout to allow the toast to show
+    // Redirect to appropriate dashboard based on role
     setTimeout(() => {
       if (isAdmin) {
         navigate("/admin");
-      } else if (redirectPath) {
-        // Clear the stored path to prevent unexpected redirects on future logins
-        localStorage.removeItem("redirectPath");
-        navigate(redirectPath);
       } else {
         navigate("/user-dashboard");
       }
-    }, 1000);
+    }, 1500);
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <div className="flex-grow flex items-center justify-center py-12">
+      <div className="flex-grow flex items-center justify-center bg-drivefit-gray py-12">
         <div className="w-full max-w-md px-4">
-          <Card className="glass-card p-8 border-royal-green/20 shadow-royal-green/30">
-            <div className="text-center mb-8 animate-fade-in">
-              <h1 className="text-2xl font-bold text-gradient">Welcome Back</h1>
-              <p className="text-gray-300 mt-2">Sign in to your DriveFit account</p>
+          <Card className="p-8">
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold">Welcome Back</h1>
+              <p className="text-gray-600 mt-2">Sign in to your DriveFit account</p>
             </div>
             
             <Form {...form}>
@@ -88,14 +80,13 @@ const SignIn = () => {
                   control={form.control}
                   name="email"
                   render={({ field }) => (
-                    <FormItem className="animate-fade-in" style={{ animationDelay: "100ms" }}>
+                    <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
                           type="email"
                           placeholder="email@example.com"
                           {...field}
-                          className="glass-input border-royal-green/20"
                         />
                       </FormControl>
                       <FormMessage />
@@ -107,7 +98,7 @@ const SignIn = () => {
                   control={form.control}
                   name="password"
                   render={({ field }) => (
-                    <FormItem className="animate-fade-in" style={{ animationDelay: "200ms" }}>
+                    <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
                         <div className="relative">
@@ -115,13 +106,12 @@ const SignIn = () => {
                             type={showPassword ? "text" : "password"}
                             placeholder="••••••••"
                             {...field}
-                            className="glass-input border-royal-green/20"
                           />
                           <Button
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="absolute right-0 top-0 h-full px-3 text-gray-300"
+                            className="absolute right-0 top-0 h-full px-3"
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? (
@@ -137,16 +127,16 @@ const SignIn = () => {
                   )}
                 />
                 
-                <div className="flex items-center justify-between animate-fade-in" style={{ animationDelay: "300ms" }}>
+                <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <input
                       type="checkbox"
                       id="remember-me"
-                      className="h-4 w-4 rounded border-royal-green/50 text-royal-green focus:ring-royal-green"
+                      className="h-4 w-4 rounded border-gray-300 text-drivefit-blue focus:ring-drivefit-blue"
                     />
                     <label
                       htmlFor="remember-me"
-                      className="ml-2 block text-sm text-gray-300"
+                      className="ml-2 block text-sm text-gray-700"
                     >
                       Remember me
                     </label>
@@ -155,28 +145,28 @@ const SignIn = () => {
                   <div className="text-sm">
                     <Link
                       to="/forgot-password"
-                      className="text-royal-green hover:underline"
+                      className="text-drivefit-blue hover:underline"
                     >
                       Forgot password?
                     </Link>
                   </div>
                 </div>
                 
-                <Button type="submit" className="w-full bg-royal-green hover:bg-royal-green/90 animate-pulse-slow">
+                <Button type="submit" className="w-full bg-drivefit-blue hover:bg-drivefit-blue/90">
                   Sign In
                 </Button>
                 
-                <div className="text-center mt-4 animate-fade-in" style={{ animationDelay: "400ms" }}>
-                  <p className="text-sm text-gray-300">
+                <div className="text-center mt-4">
+                  <p className="text-sm text-gray-600">
                     Don't have an account?{" "}
-                    <Link to="/signup" className="text-royal-red hover:underline">
+                    <Link to="/signup" className="text-drivefit-red hover:underline">
                       Sign up
                     </Link>
                   </p>
-                  <div className="mt-4 pt-4 border-t border-gray-700">
-                    <p className="text-xs text-gray-400 mb-2">For testing purposes:</p>
-                    <p className="text-xs text-gray-400">Admin: admin@drivefit.com / password123</p>
-                    <p className="text-xs text-gray-400">User: user@drivefit.com / password123</p>
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-xs text-gray-500 mb-2">For testing purposes:</p>
+                    <p className="text-xs text-gray-500">Admin: admin@drivefit.com / password123</p>
+                    <p className="text-xs text-gray-500">User: user@drivefit.com / password123</p>
                   </div>
                 </div>
               </form>

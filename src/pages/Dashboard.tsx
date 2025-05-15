@@ -13,8 +13,6 @@ const Dashboard = () => {
     const userEmail = localStorage.getItem("userEmail");
     
     if (!userEmail) {
-      // Save current path for redirect after login
-      localStorage.setItem("redirectPath", location.pathname);
       navigate("/signin");
       return;
     } 
@@ -37,15 +35,13 @@ const Dashboard = () => {
       console.log("Setting user type from URL:", typeFromUrl);
     }
     
-    // Check if there's a saved redirect path
-    const redirectPath = localStorage.getItem("redirectPath");
-    
-    if (redirectPath) {
-      localStorage.removeItem("redirectPath");
-      navigate(redirectPath);
-    } else {
-      navigate("/user-dashboard");
+    // If no user type is set, don't set a default
+    // Let the user choose their account type in the dashboard
+    if (!userType) {
+      console.log("No user type found, user will need to select one");
     }
+    
+    navigate("/user-dashboard");
 
     // Add a small delay to show loading state
     const timer = setTimeout(() => {
@@ -53,13 +49,13 @@ const Dashboard = () => {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [navigate, location.pathname]);
+  }, [navigate]);
   
   // Show loading indicator while redirecting
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-black to-royal-green/90">
-        <div className="glass-card p-8 rounded-2xl animate-scale-in">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-black to-drivefit-green/90">
+        <div className="glass-effect p-8 rounded-2xl animate-scale-in">
           <Loader className="h-16 w-16 animate-spin text-white mx-auto" />
           <p className="mt-6 text-xl text-white font-light">Loading your dashboard...</p>
         </div>

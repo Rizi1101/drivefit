@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import AuthPrompt from "./AuthPrompt";
@@ -14,7 +14,6 @@ interface BuyButtonProps {
 
 const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -44,10 +43,8 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   }, []);
   
   const handleBuyClick = () => {
-    // If not logged in, show auth prompt and store current path
+    // If not logged in, show auth prompt
     if (!userEmail) {
-      // Store current path for redirect after login
-      localStorage.setItem("redirectPath", location.pathname);
       setShowAuthPrompt(true);
       return;
     }
@@ -66,7 +63,7 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
       // User is logged in but is a seller only - show restriction message
       toast({
         title: "Account Type Restriction",
-        description: "You need a buyer account to purchase vehicles. Please update your account type in settings.",
+        description: "You need a buyer account to purchase vehicles",
         variant: "destructive"
       });
     }
@@ -77,7 +74,7 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
       <Button 
         onClick={handleBuyClick} 
         disabled={isLoading}
-        className="w-full bg-royal-green hover:bg-royal-green/90 text-white py-3 px-4 rounded flex items-center justify-center glass-card"
+        className="w-full bg-drivefit-blue hover:bg-drivefit-blue/90 text-white py-3 px-4 rounded flex items-center justify-center"
       >
         <ShoppingCart className="mr-2 h-5 w-5" />
         Buy Now
