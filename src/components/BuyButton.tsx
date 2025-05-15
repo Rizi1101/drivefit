@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import AuthPrompt from "./AuthPrompt";
@@ -14,6 +14,7 @@ interface BuyButtonProps {
 
 const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -43,14 +44,22 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   }, []);
   
   const handleBuyClick = () => {
-    // If not logged in, show auth prompt
+    // If not logged in, show auth prompt and store current vehicle details
     if (!userEmail) {
+      // Save current vehicle details to localStorage for after login
+      localStorage.setItem("pendingPurchase", JSON.stringify({
+        vehicleId,
+        price,
+        title,
+        returnUrl: location.pathname
+      }));
+      
       setShowAuthPrompt(true);
       return;
     }
     
     // Check if user is a buyer or has dual role
-    if (userType === "buyer" || userType === "both") {
+    if (!userType || userType === "buyer" || userType === "both") {
       toast({
         title: "Processing Purchase",
         description: `Preparing ${title} for checkout`
@@ -60,12 +69,22 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
         state: { vehicleId, price, title } 
       });
     } else {
-      // User is logged in but is a seller only - show restriction message
+      // User is logged in but is a seller only
+      // We'll now update the user type instead of just showing restriction
+      localStorage.setItem("userType", "both");
+      setUserType("both");
+      
       toast({
-        title: "Account Type Restriction",
-        description: "You need a buyer account to purchase vehicles",
-        variant: "destructive"
+        title: "Account Updated",
+        description: "Your account has been updated to allow purchases"
       });
+      
+      // Proceed with purchase after a small delay
+      setTimeout(() => {
+        navigate("/payment", { 
+          state: { vehicleId, price, title } 
+        });
+      }, 1000);
     }
   };
   

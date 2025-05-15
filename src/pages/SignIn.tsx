@@ -1,6 +1,5 @@
-
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,6 +26,7 @@ type SignInValues = z.infer<typeof signInSchema>;
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   
   const form = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
@@ -43,6 +43,9 @@ const SignIn = () => {
     // Store the email in localStorage to maintain session
     localStorage.setItem("userEmail", values.email);
     
+    // Set default user type as "both" to allow buying and selling
+    localStorage.setItem("userType", "both");
+    
     // Determine if user is admin or regular user based on email
     // In a real application, this would be determined by the backend
     const isAdmin = values.email === "admin@drivefit.com";
@@ -52,9 +55,28 @@ const SignIn = () => {
       description: "Welcome back to DriveFit!",
     });
     
-    // Redirect to appropriate dashboard based on role
+    // Check if there's a pending purchase
+    const pendingPurchase = localStorage.getItem("pendingPurchase");
+    
     setTimeout(() => {
-      if (isAdmin) {
+      if (pendingPurchase) {
+        // Clear the pending purchase from localStorage
+        localStorage.removeItem("pendingPurchase");
+        const purchaseDetails = JSON.parse(pendingPurchase);
+        
+        // Navigate back to the vehicle page or directly to payment
+        if (purchaseDetails.returnUrl) {
+          navigate(purchaseDetails.returnUrl);
+        } else {
+          navigate("/payment", { 
+            state: { 
+              vehicleId: purchaseDetails.vehicleId,
+              price: purchaseDetails.price,
+              title: purchaseDetails.title 
+            } 
+          });
+        }
+      } else if (isAdmin) {
         navigate("/admin");
       } else {
         navigate("/user-dashboard");
