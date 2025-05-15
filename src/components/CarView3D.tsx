@@ -1,16 +1,26 @@
 
 import { useRef, useState, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Environment, useGLTF, PerspectiveCamera } from "@react-three/drei";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { GLTF } from 'three-stdlib';
+import * as THREE from 'three';
 
-// Define the car model component
-function CarModel({ modelPath, rotationSpeed = 0.003 }) {
-  const group = useRef();
-  const { scene } = useGLTF(modelPath);
+// Add type definition for GLTF return type
+type GLTFResult = GLTF & {
+  nodes: Record<string, THREE.Mesh>;
+  materials: Record<string, THREE.Material>;
+};
+
+// Define the car model component with proper typing
+function CarModel({ modelPath, rotationSpeed = 0.003 }: { modelPath: string; rotationSpeed?: number }) {
+  // Use proper typing for the ref
+  const group = useRef<THREE.Group>(null);
+  const { scene } = useGLTF(modelPath) as GLTFResult;
   
+  // Use proper typing for useFrame
   useFrame(() => {
     if (group.current) {
       group.current.rotation.y += rotationSpeed;
