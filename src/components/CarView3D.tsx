@@ -10,15 +10,20 @@ import * as THREE from 'three';
 
 // Add type definition for GLTF return type
 type GLTFResult = GLTF & {
-  nodes: Record<string, THREE.Mesh>;
-  materials: Record<string, THREE.Material>;
+  nodes: {
+    [name: string]: THREE.Mesh;
+  };
+  materials: {
+    [name: string]: THREE.Material;
+  };
 };
 
 // Define the car model component with proper typing
 function CarModel({ modelPath, rotationSpeed = 0.003 }: { modelPath: string; rotationSpeed?: number }) {
   // Use proper typing for the ref
   const group = useRef<THREE.Group>(null);
-  const { scene } = useGLTF(modelPath) as GLTFResult;
+  // Use type assertion to handle the GLTF type
+  const gltf = useGLTF(modelPath) as unknown as GLTFResult;
   
   // Use proper typing for useFrame
   useFrame(() => {
@@ -27,7 +32,7 @@ function CarModel({ modelPath, rotationSpeed = 0.003 }: { modelPath: string; rot
     }
   });
 
-  return <primitive ref={group} object={scene} position={[0, -1, 0]} scale={1.5} />;
+  return <primitive ref={group} object={gltf.scene} position={[0, -1, 0]} scale={1.5} />;
 }
 
 interface CarView3DProps {
@@ -87,11 +92,13 @@ const CarView3D = ({
           
           <OrbitControls 
             makeDefault
-            enableZoom={true}
-            enablePan={false}
-            enabled={!autoRotate}
+            enableDamping
+            dampingFactor={0.05}
             minDistance={4}
             maxDistance={9}
+            enableZoom
+            enablePan={false}
+            enabled={!autoRotate}
           />
         </Canvas>
       </div>
