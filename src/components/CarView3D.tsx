@@ -92,8 +92,8 @@ const CarView3D = ({
           
           <OrbitControls 
             makeDefault
-            minDistance={4}
-            maxDistance={9}
+            enableZoom
+            enableRotate
             enabled={!autoRotate}
             enablePan={false}
           />
