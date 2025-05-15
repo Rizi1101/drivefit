@@ -4,11 +4,10 @@ import { useParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BuyButton from "@/components/BuyButton";
-import CarView3D from "@/components/CarView3D";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Heart, Car, Share, Info, MessageCircle } from "lucide-react";
+import { Heart, Share, Info, MessageCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
@@ -16,7 +15,6 @@ const VehicleDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [vehicle, setVehicle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [activeView, setActiveView] = useState<"images" | "3d">("images");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
@@ -57,7 +55,6 @@ const VehicleDetail = () => {
         "https://images.unsplash.com/photo-1583267746897-2cf415887172?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80",
         "https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80"
       ],
-      model3dPath: "https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/models/car-muscle/model.gltf"
     };
 
     setTimeout(() => {
@@ -144,62 +141,41 @@ const VehicleDetail = () => {
               <span className="px-3 py-1 bg-royal-green/20 text-royal-green rounded-full text-sm">{vehicle.transmission}</span>
             </div>
 
-            <div className="flex mb-4 space-x-4">
-              <Button 
-                variant="outline" 
-                className={activeView === "images" ? "bg-royal-green text-white" : "bg-transparent"}
-                onClick={() => setActiveView("images")}
-              >
-                Images
-              </Button>
-              <Button 
-                variant="outline" 
-                className={activeView === "3d" ? "bg-royal-green text-white" : "bg-transparent"}
-                onClick={() => setActiveView("3d")}
-              >
-                3D View
-              </Button>
-            </div>
-
             <div className="mb-8 rounded-lg overflow-hidden">
-              {activeView === "images" ? (
-                <div className="relative">
-                  <AspectRatio ratio={16 / 9}>
-                    <img 
-                      src={vehicle.images[currentImageIndex]} 
-                      alt={`${vehicle.title} - image ${currentImageIndex + 1}`} 
-                      className="w-full h-full object-cover"
-                    />
-                  </AspectRatio>
+              <div className="relative">
+                <AspectRatio ratio={16 / 9}>
+                  <img 
+                    src={vehicle.images[currentImageIndex]} 
+                    alt={`${vehicle.title} - image ${currentImageIndex + 1}`} 
+                    className="w-full h-full object-cover"
+                  />
+                </AspectRatio>
 
-                  <button 
-                    onClick={handlePrevImage}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"
-                  >
-                    &#10094;
-                  </button>
-                  <button 
-                    onClick={handleNextImage}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"
-                  >
-                    &#10095;
-                  </button>
-                  
-                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                    {vehicle.images.map((_, index) => (
-                      <button 
-                        key={index} 
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={`w-3 h-3 rounded-full ${
-                          index === currentImageIndex ? 'bg-royal-green' : 'bg-white/30'
-                        }`}
-                      />
-                    ))}
-                  </div>
+                <button 
+                  onClick={handlePrevImage}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"
+                >
+                  &#10094;
+                </button>
+                <button 
+                  onClick={handleNextImage}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 flex items-center justify-center text-white hover:bg-black/70"
+                >
+                  &#10095;
+                </button>
+                
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                  {vehicle.images.map((_, index) => (
+                    <button 
+                      key={index} 
+                      onClick={() => setCurrentImageIndex(index)}
+                      className={`w-3 h-3 rounded-full ${
+                        index === currentImageIndex ? 'bg-royal-green' : 'bg-white/30'
+                      }`}
+                    />
+                  ))}
                 </div>
-              ) : (
-                <CarView3D modelPath={vehicle.model3dPath} carName={vehicle.title} />
-              )}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
