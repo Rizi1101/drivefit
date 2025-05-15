@@ -7,11 +7,15 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { useUserData } from "@/hooks/use-user-data";
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const transactionId = "TXN" + Math.floor(Math.random() * 1000000);
+  const { addTransaction } = useUserData();
+  
+  // Get transaction ID from state or generate a new one
+  const transactionId = location.state?.transactionId || "TXN" + Math.floor(Math.random() * 1000000);
   const date = new Date().toLocaleDateString("en-PK");
   
   // Get payment data from state or use default values
@@ -21,13 +25,24 @@ const PaymentSuccess = () => {
   };
   
   useEffect(() => {
-    // In a real app, we would update the database with the transaction
-    // This would include updating the vehicle status as sold and recording the transaction
-    
+    // Record the transaction in the user's data
     const userEmail = localStorage.getItem("userEmail");
     if (userEmail) {
-      // Record transaction in user's account
+      // Add transaction to user's account
+      addTransaction({
+        id: Date.now(),
+        vehicleTitle: vehicleData.title,
+        price: vehicleData.price,
+        date: date,
+        status: "completed",
+        transactionId: transactionId
+      });
+      
       console.log("Recording transaction for user:", userEmail);
+      
+      // Clear any pending purchase
+      localStorage.removeItem("pendingPurchase");
+      sessionStorage.removeItem("pendingOperation");
     }
     
     // Show success notification
@@ -35,7 +50,7 @@ const PaymentSuccess = () => {
       title: "Transaction Completed",
       description: "Your vehicle purchase was successful",
     });
-  }, []);
+  }, [addTransaction, date, transactionId, vehicleData.price, vehicleData.title]);
   
   return (
     <div className="min-h-screen flex flex-col">

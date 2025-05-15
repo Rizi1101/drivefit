@@ -2,8 +2,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { useUserData } from "@/hooks/use-user-data";
 
 const FEATURED_VEHICLES = [
   {
@@ -12,6 +14,8 @@ const FEATURED_VEHICLES = [
     price: "PKR 4,850,000",
     location: "Karachi, Sindh",
     mileage: "15,300",
+    status: "available",
+    dateAdded: "2024-05-10",
     image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
   },
   {
@@ -20,6 +24,8 @@ const FEATURED_VEHICLES = [
     price: "PKR 5,350,000",
     location: "Lahore, Punjab",
     mileage: "22,500",
+    status: "available",
+    dateAdded: "2024-05-12",
     image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f37?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
   },
   {
@@ -28,6 +34,8 @@ const FEATURED_VEHICLES = [
     price: "PKR 2,890,000",
     location: "Islamabad, Federal",
     mileage: "34,600",
+    status: "available",
+    dateAdded: "2024-05-08",
     image: "https://images.unsplash.com/photo-1549399542-7e38e2ee9233?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
   },
   {
@@ -36,43 +44,59 @@ const FEATURED_VEHICLES = [
     price: "PKR 7,250,000",
     location: "Peshawar, KPK",
     mileage: "8,200",
+    status: "available",
+    dateAdded: "2024-05-05",
     image: "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
   }
 ];
 
 const FeaturedVehicles = () => {
+  const navigate = useNavigate();
   const [favorites, setFavorites] = useState<number[]>([]);
+  const { userData, toggleFavorite, addActivity } = useUserData();
 
-  const toggleFavorite = (id: number) => {
-    if (favorites.includes(id)) {
-      setFavorites(favorites.filter(favId => favId !== id));
+  // Initialize favorites based on user data
+  useEffect(() => {
+    const userFavoriteIds = userData.favorites.map(fav => fav.id);
+    setFavorites(userFavoriteIds);
+  }, [userData.favorites]);
+
+  const handleToggleFavorite = (id: number) => {
+    const vehicle = FEATURED_VEHICLES.find(v => v.id === id);
+    if (!vehicle) return;
+    
+    // Check if user is logged in
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
       toast({
-        title: "Removed from favorites",
-        description: "Vehicle has been removed from your favorites",
+        title: "Authentication Required",
+        description: "Please sign in to save favorites",
       });
-    } else {
+      return;
+    }
+    
+    const wasAdded = toggleFavorite(vehicle);
+    
+    // Update local state for immediate UI update
+    if (wasAdded) {
       setFavorites([...favorites, id]);
-      toast({
-        title: "Added to favorites",
-        description: "Vehicle has been added to your favorites",
-      });
+    } else {
+      setFavorites(favorites.filter(favId => favId !== id));
     }
   };
 
-  const handleViewDetails = (title: string) => {
-    console.log(`Viewing details for: ${title}`);
-    toast({
-      title: "Vehicle details",
-      description: `Showing details for ${title}`,
-    });
+  const handleViewDetails = (id: number, title: string) => {
+    // Add activity and navigate to vehicle detail
+    const userEmail = localStorage.getItem("userEmail");
+    if (userEmail) {
+      addActivity("Vehicle viewed", title);
+    }
+    
+    navigate(`/vehicles/${id}`);
   };
 
   const handleViewAll = () => {
-    console.log("View all vehicles clicked");
-    toast({
-      title: "All vehicles",
-      description: "Loading all available vehicles...",
-    });
+    navigate("/vehicles");
   };
 
   return (
@@ -96,7 +120,7 @@ const FeaturedVehicles = () => {
                 />
                 <button 
                   className="absolute top-2 right-2 p-2 rounded-full bg-white bg-opacity-50 hover:bg-opacity-70 transition-all"
-                  onClick={() => toggleFavorite(vehicle.id)}
+                  onClick={() => handleToggleFavorite(vehicle.id)}
                   aria-label={favorites.includes(vehicle.id) ? "Remove from favorites" : "Add to favorites"}
                 >
                   <Heart 
@@ -113,7 +137,7 @@ const FeaturedVehicles = () => {
                 </div>
                 <Button 
                   className="w-full mt-4 bg-drivefit-blue hover:bg-drivefit-blue/90 text-white"
-                  onClick={() => handleViewDetails(vehicle.title)}
+                  onClick={() => handleViewDetails(vehicle.id, vehicle.title)}
                 >
                   View Details
                 </Button>

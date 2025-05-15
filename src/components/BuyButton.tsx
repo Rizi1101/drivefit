@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import AuthPrompt from "./AuthPrompt";
 import { toast } from "@/hooks/use-toast";
+import { useUserData } from "@/hooks/use-user-data";
 
 interface BuyButtonProps {
   vehicleId: number;
@@ -15,6 +16,7 @@ interface BuyButtonProps {
 const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { addActivity } = useUserData();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -65,6 +67,9 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
         description: `Preparing ${title} for checkout`
       });
       
+      // Record activity
+      addActivity("Started purchase", title);
+      
       navigate("/payment", { 
         state: { vehicleId, price, title } 
       });
@@ -78,6 +83,9 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
         title: "Account Updated",
         description: "Your account has been updated to allow purchases"
       });
+      
+      // Record activity
+      addActivity("Account type updated", "Changed to buyer and seller");
       
       // Proceed with purchase after a small delay
       setTimeout(() => {

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Loader } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Dashboard = () => {
     const userEmail = localStorage.getItem("userEmail");
     
     if (!userEmail) {
-      navigate("/signin");
+      navigate("/signin", { state: { returnUrl: "/dashboard" } });
       return;
     } 
     
@@ -22,8 +23,9 @@ const Dashboard = () => {
       return;
     }
     
-    // Get current userType from localStorage
+    // Get current userType from localStorage and pending states
     let userType = localStorage.getItem("userType");
+    const pendingPurchase = localStorage.getItem("pendingPurchase");
     
     // Update localStorage with userType from URL state if provided
     const urlParams = new URLSearchParams(window.location.search);
@@ -33,12 +35,32 @@ const Dashboard = () => {
       userType = typeFromUrl;
       localStorage.setItem("userType", typeFromUrl);
       console.log("Setting user type from URL:", typeFromUrl);
+      toast({
+        title: "Account Type Updated",
+        description: `Your account has been updated to ${typeFromUrl === 'both' ? 'buyer and seller' : typeFromUrl}`,
+      });
     }
     
     // If no user type is set, don't set a default
     // Let the user choose their account type in the dashboard
     if (!userType) {
       console.log("No user type found, user will need to select one");
+    }
+    
+    // Check for pending vehicle operations in session storage
+    const pendingOperation = sessionStorage.getItem("pendingOperation");
+    if (pendingOperation) {
+      const operation = JSON.parse(pendingOperation);
+      if (operation.type === "payment_success") {
+        sessionStorage.removeItem("pendingOperation");
+        navigate("/payment-success", { 
+          state: { 
+            transactionId: operation.transactionId,
+            vehicleData: operation.vehicleData
+          } 
+        });
+        return;
+      }
     }
     
     navigate("/user-dashboard");
