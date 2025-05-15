@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { toast } from '@/hooks/use-toast';
 
 export interface UserVehicleListing {
   id: number;
@@ -181,13 +182,18 @@ export const useUserData = () => {
   
   // Delete a listing
   const deleteListing = (id: number) => {
+    const deletedListing = userData.listings.find(listing => listing.id === id);
     const updatedListings = userData.listings.filter(listing => listing.id !== id);
     const updatedData = { ...userData, listings: updatedListings };
     setUserData(updatedData);
     saveData(updatedData);
     
     // Add activity log
-    addActivity("Vehicle listing removed", `Listing #${id} was removed`);
+    if (deletedListing) {
+      addActivity("Vehicle listing removed", deletedListing.title);
+    } else {
+      addActivity("Vehicle listing removed", `Listing #${id} was removed`);
+    }
   };
   
   // Toggle favorite status
@@ -213,6 +219,23 @@ export const useUserData = () => {
     addActivity(`Vehicle ${actionText} favorites`, vehicle.title);
     
     return existingIndex === -1; // Return true if added, false if removed
+  };
+  
+  // Remove favorite
+  const removeFavorite = (id: number) => {
+    const favToRemove = userData.favorites.find(fav => fav.id === id);
+    if (!favToRemove) return;
+    
+    const updatedFavorites = userData.favorites.filter(fav => fav.id !== id);
+    const updatedData = { ...userData, favorites: updatedFavorites };
+    setUserData(updatedData);
+    saveData(updatedData);
+    
+    // Add activity log
+    addActivity("Vehicle removed from favorites", favToRemove.title);
+    
+    // Return the removed favorite for toast messages or other UI feedback
+    return favToRemove;
   };
   
   // Add a new transaction
@@ -251,13 +274,25 @@ export const useUserData = () => {
     saveData(updatedData);
   };
   
+  // Get current stats for the user dashboard
+  const getUserStats = () => {
+    return {
+      listings: userData.listings.length,
+      favorites: userData.favorites.length,
+      transactions: userData.transactions.length,
+      activities: userData.activities.length
+    };
+  };
+  
   return {
     userData,
     updateListings,
     addListing,
     deleteListing,
     toggleFavorite,
+    removeFavorite,
     addTransaction,
-    addActivity
+    addActivity,
+    getUserStats
   };
 };

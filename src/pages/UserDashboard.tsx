@@ -9,79 +9,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { User, Car, ShoppingCart, Heart, Plus, Trash, Edit, Settings } from "lucide-react";
-
-// Updated mock data with current years
-const favoriteVehicles = [
-  { 
-    id: 1, 
-    title: "2024 Toyota Corolla GLi", 
-    price: "PKR 4,850,000", 
-    status: "available", 
-    dateAdded: "2024-05-10",
-    image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
-  },
-  { 
-    id: 2, 
-    title: "2025 Honda Civic Oriel", 
-    price: "PKR 5,350,000", 
-    status: "available", 
-    dateAdded: "2025-02-12",
-    image: "https://images.unsplash.com/photo-1485833077593-4278bba3f11f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
-  }
-];
-
-// Transaction history
-const transactionHistory = [
-  {
-    id: 1,
-    vehicleTitle: "2024 Toyota Corolla GLi",
-    price: "PKR 4,850,000",
-    date: "2024-05-15",
-    status: "completed",
-    transactionId: "TXN783921"
-  },
-  {
-    id: 2,
-    vehicleTitle: "2024 Honda City 1.5L",
-    price: "PKR 3,950,000",
-    date: "2024-04-22",
-    status: "pending",
-    transactionId: "TXN651234"
-  }
-];
-
-// Updated user listings with images
-const defaultUserListings = [
-  { 
-    id: 3, 
-    title: "2024 Suzuki Swift DLX", 
-    price: "PKR 2,890,000", 
-    status: "active", 
-    views: 45, 
-    dateAdded: "2024-05-08",
-    image: "https://images.unsplash.com/photo-1441057206919-63d19fac2369?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
-  },
-  { 
-    id: 4, 
-    title: "2025 KIA Sportage Alpha", 
-    price: "PKR 7,250,000", 
-    status: "pending", 
-    views: 12, 
-    dateAdded: "2025-01-15",
-    image: "https://images.unsplash.com/photo-1452960962994-acf4fd70b632?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
-  }
-];
-
-const activityLog = [
-  { id: 1, activity: "Vehicle viewed", details: "2024 Toyota Corolla GLi", date: "2024-05-15" },
-  { id: 2, activity: "Message sent", details: "About 2025 Honda Civic", date: "2024-05-14" },
-  { id: 3, activity: "Vehicle listed", details: "2024 Suzuki Swift DLX", date: "2024-05-10" },
-  { id: 4, activity: "Vehicle purchased", details: "2024 Toyota Corolla GLi", date: "2024-05-15" }
-];
+import { useUserData } from "@/hooks/use-user-data";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
-  const [userListings, setUserListings] = useState(defaultUserListings);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [userInfo, setUserInfo] = useState({
     name: "User",
@@ -90,6 +21,12 @@ const UserDashboard = () => {
     userType: "buyer", // Default to buyer, not both
     joinedDate: "May 2023"
   });
+  
+  const { userData, getUserStats, deleteListing, removeFavorite, addActivity } = useUserData();
+  const userListings = userData.listings;
+  const favoriteVehicles = userData.favorites;
+  const transactionHistory = userData.transactions;
+  const activityLog = userData.activities;
 
   useEffect(() => {
     // Check if user is logged in
@@ -113,8 +50,6 @@ const UserDashboard = () => {
       userType: userType,
       joinedDate: "May 2023" // In a real app, this would come from the database
     });
-    
-    // In a real app, we would fetch user info, listings, favorites and transactions from an API
   }, [navigate]);
 
   const handleAddNewListing = () => {
@@ -132,7 +67,7 @@ const UserDashboard = () => {
   };
 
   const handleDeleteListing = (id: number) => {
-    setUserListings(userListings.filter(listing => listing.id !== id));
+    deleteListing(id);
     toast({
       title: "Listing Deleted",
       description: "Your vehicle listing has been removed successfully",
@@ -145,10 +80,13 @@ const UserDashboard = () => {
   };
 
   const handleRemoveFavorite = (id: number) => {
-    toast({
-      title: "Removed from Favorites",
-      description: "Vehicle has been removed from your saved list",
-    });
+    const removed = removeFavorite(id);
+    if (removed) {
+      toast({
+        title: "Removed from Favorites",
+        description: "Vehicle has been removed from your saved list",
+      });
+    }
   };
 
   const updateUserSettings = (e: React.FormEvent) => {
@@ -182,6 +120,9 @@ const UserDashboard = () => {
       phone: newPhone,
       userType: newUserType
     });
+    
+    // Add activity log
+    addActivity("Account settings updated", `Account type changed to ${newUserType}`);
     
     toast({
       title: "Settings Updated",
@@ -535,24 +476,30 @@ const UserDashboard = () => {
                 <CardDescription>Your recent activities on DriveFit</CardDescription>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Activity</TableHead>
-                      <TableHead>Details</TableHead>
-                      <TableHead>Date</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {activityLog.map((log) => (
-                      <TableRow key={log.id}>
-                        <TableCell className="font-medium">{log.activity}</TableCell>
-                        <TableCell>{log.details}</TableCell>
-                        <TableCell>{log.date}</TableCell>
+                {activityLog.length > 0 ? (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Activity</TableHead>
+                        <TableHead>Details</TableHead>
+                        <TableHead>Date</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {activityLog.map((log) => (
+                        <TableRow key={log.id}>
+                          <TableCell className="font-medium">{log.activity}</TableCell>
+                          <TableCell>{log.details}</TableCell>
+                          <TableCell>{log.date}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                ) : (
+                  <div className="text-center py-8">
+                    <p>No recent activity to display</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

@@ -75,13 +75,27 @@ const FeaturedVehicles = () => {
       return;
     }
     
-    const wasAdded = toggleFavorite(vehicle);
+    const wasAdded = toggleFavorite({
+      id: vehicle.id,
+      title: vehicle.title,
+      price: vehicle.price,
+      status: vehicle.status,
+      dateAdded: vehicle.dateAdded,
+      image: vehicle.image
+    });
     
-    // Update local state for immediate UI update
     if (wasAdded) {
-      setFavorites([...favorites, id]);
+      setFavorites(prev => [...prev, id]);
+      toast({
+        title: "Added to Favorites",
+        description: `${vehicle.title} has been added to your favorites`,
+      });
     } else {
-      setFavorites(favorites.filter(favId => favId !== id));
+      setFavorites(prev => prev.filter(favId => favId !== id));
+      toast({
+        title: "Removed from Favorites",
+        description: `${vehicle.title} has been removed from your saved list`,
+      });
     }
   };
 
