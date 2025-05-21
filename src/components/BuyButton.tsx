@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -112,8 +111,14 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
     // Ensure data is refreshed before navigation
     refreshUserData();
     
+    // Pass the complete vehicle information to the payment page
     navigate("/payment", { 
-      state: { vehicleId, price, title } 
+      state: { 
+        vehicleId, 
+        price, 
+        title,
+        transactionId: "TXN" + Math.floor(Math.random() * 1000000)
+      } 
     });
   };
   

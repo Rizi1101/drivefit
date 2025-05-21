@@ -26,11 +26,12 @@ const PaymentPage = () => {
   const [receiptImage, setReceiptImage] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   
-  // Get vehicle info from state
+  // Get vehicle info from location state
   const vehicleData = location.state || {
     vehicleId: 1,
     price: "PKR 3,000",
-    title: "Premium Vehicle Listing"
+    title: "Premium Vehicle Listing",
+    transactionId: "TXN" + Math.floor(Math.random() * 1000000)
   };
   
   // Format product information
@@ -65,7 +66,14 @@ const PaymentPage = () => {
         description: `Your payment for ${product.name} has been processed.`,
       });
       
-      navigate("/payment-success", { state: vehicleData });
+      // Pass all vehicle data to success page, ensuring price is included
+      navigate("/payment-success", { 
+        state: {
+          ...vehicleData,
+          transactionId: vehicleData.transactionId,
+          paymentMethod: paymentMethod
+        } 
+      });
     }, 2000);
   };
   

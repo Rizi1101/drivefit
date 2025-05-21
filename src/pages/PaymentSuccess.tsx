@@ -18,8 +18,8 @@ const PaymentSuccess = () => {
   const transactionId = location.state?.transactionId || "TXN" + Math.floor(Math.random() * 1000000);
   const date = new Date().toLocaleDateString("en-PK");
   
-  // Get payment data from state or use default values
-  const vehicleData = location.state?.vehicleData || {
+  // Get vehicle data from state, ensuring we have the actual price
+  const vehicleData = location.state || {
     title: "Vehicle Purchase",
     price: "PKR 3,000"
   };
@@ -81,11 +81,11 @@ const PaymentSuccess = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Vehicle:</span>
-                <span className="font-medium">{vehicleData.title || "Vehicle Purchase"}</span>
+                <span className="font-medium">{vehicleData.title}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Amount:</span>
-                <span className="font-medium text-drivefit-orange">{vehicleData.price || "PKR 3,000"}</span>
+                <span className="font-medium text-drivefit-orange">{vehicleData.price}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Payment Method:</span>
