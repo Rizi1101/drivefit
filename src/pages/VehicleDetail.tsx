@@ -1,13 +1,14 @@
-
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Heart, Share2, Phone, Mail, Calendar, Car, MapPin } from "lucide-react";
+import { Share2, Phone, Mail, Calendar, Car, MapPin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import BuyButton from "@/components/BuyButton";
+import VehicleDetailCard from "@/components/VehicleDetailCard";
+import { useUserData } from "@/hooks/use-user-data";
 
 // Mock vehicle data
 const vehicleData = {
@@ -63,16 +64,21 @@ const VehicleDetail = () => {
   const { id } = useParams();
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const { userData } = useUserData();
   
   // In a real app, we would fetch the vehicle data based on the ID
   console.log("Vehicle ID:", id);
   
-  const toggleFavorite = () => {
+  // Check if this vehicle is already in favorites
+  useState(() => {
+    const isAlreadyFavorite = userData.favorites.some(
+      fav => fav.id === (Number(id) || 1)
+    );
+    setIsFavorite(isAlreadyFavorite);
+  });
+  
+  const handleToggleFavorite = () => {
     setIsFavorite(!isFavorite);
-    toast({
-      title: isFavorite ? "Removed from favorites" : "Added to favorites",
-      description: `${vehicleData.title} has been ${isFavorite ? "removed from" : "added to"} your favorites`,
-    });
   };
   
   const handleShare = () => {
@@ -112,22 +118,11 @@ const VehicleDetail = () => {
           </div>
           
           {/* Vehicle title and actions */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-            <h1 className="text-3xl font-bold mb-2 md:mb-0">{vehicleData.title}</h1>
-            <div className="flex space-x-2">
-              <Button 
-                variant="outline" 
-                className={isFavorite ? "bg-drivefit-red text-white" : ""}
-                onClick={toggleFavorite}
-              >
-                <Heart className={`mr-2 h-5 w-5 ${isFavorite ? "fill-current" : ""}`} /> 
-                {isFavorite ? "Favorited" : "Add to Favorites"}
-              </Button>
-              <Button variant="outline" onClick={handleShare}>
-                <Share2 className="mr-2 h-5 w-5" /> Share
-              </Button>
-            </div>
-          </div>
+          <VehicleDetailCard 
+            vehicle={vehicleData}
+            isFavorite={isFavorite}
+            onToggleFavorite={handleToggleFavorite}
+          />
           
           {/* Main content */}
           <div className="flex flex-col lg:flex-row gap-8">

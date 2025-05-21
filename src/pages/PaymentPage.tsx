@@ -10,9 +10,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [paymentMethod, setPaymentMethod] = useState<string>("bank");
   const [cardNumber, setCardNumber] = useState<string>("");
   const [expiryDate, setExpiryDate] = useState<string>("");
@@ -21,18 +23,37 @@ const PaymentPage = () => {
   const [accountNumber, setAccountNumber] = useState<string>("");
   const [bankName, setBankName] = useState<string>("");
   const [mobileNumber, setMobileNumber] = useState<string>("");
+  const [receiptImage, setReceiptImage] = useState<File | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   
-  // Simulated product information
-  const product = {
-    name: "Premium Vehicle Listing",
+  // Get vehicle info from state
+  const vehicleData = location.state || {
+    vehicleId: 1,
     price: "PKR 3,000",
-    description: "30-day premium visibility for your vehicle listing"
+    title: "Premium Vehicle Listing"
+  };
+  
+  // Format product information
+  const product = {
+    name: vehicleData.title || "Premium Vehicle Listing",
+    price: vehicleData.price || "PKR 3,000",
+    description: "Full payment for your vehicle purchase"
   };
   
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if receipt is uploaded for bank or mobile payment
+    if ((paymentMethod === "bank" || paymentMethod === "mobile") && !receiptImage) {
+      toast({
+        title: "Payment Slip Required",
+        description: "Please upload your payment slip to complete the transaction.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setLoading(true);
     
     // Simulate payment processing
@@ -44,7 +65,7 @@ const PaymentPage = () => {
         description: `Your payment for ${product.name} has been processed.`,
       });
       
-      navigate("/payment-success");
+      navigate("/payment-success", { state: vehicleData });
     }, 2000);
   };
   
@@ -138,8 +159,17 @@ const PaymentPage = () => {
             </div>
             
             <div className="grid gap-2">
-              <Label htmlFor="receipt">Upload Payment Proof</Label>
-              <Input id="receipt" type="file" />
+              <Label htmlFor="receipt">Upload Payment Proof <span className="text-red-500">*</span></Label>
+              <Input 
+                id="receipt" 
+                type="file" 
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setReceiptImage(e.target.files[0]);
+                  }
+                }}
+              />
+              <p className="text-sm text-red-500">Payment slip is required to complete your purchase</p>
             </div>
           </div>
         );
@@ -178,13 +208,27 @@ const PaymentPage = () => {
                 <strong>Account Title:</strong> DriveFit Pakistan
               </p>
               <p className="text-xs mt-2 text-blue-600">
-                After transferring, enter transaction ID below
+                After transferring, upload proof of payment and enter transaction ID below
               </p>
             </div>
             
             <div className="grid gap-2">
-              <Label htmlFor="transactionId">Transaction ID</Label>
-              <Input id="transactionId" placeholder="Enter transaction ID" />
+              <Label htmlFor="mobileTransactionId">Transaction ID</Label>
+              <Input id="mobileTransactionId" placeholder="Enter transaction ID" />
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="mobileReceipt">Upload Payment Proof <span className="text-red-500">*</span></Label>
+              <Input 
+                id="mobileReceipt" 
+                type="file" 
+                onChange={(e) => {
+                  if (e.target.files && e.target.files[0]) {
+                    setReceiptImage(e.target.files[0]);
+                  }
+                }}
+              />
+              <p className="text-sm text-red-500">Payment slip is required to complete your purchase</p>
             </div>
           </div>
         );
@@ -236,7 +280,7 @@ const PaymentPage = () => {
                     
                     <Button 
                       type="submit" 
-                      className="w-full mt-6" 
+                      className="w-full mt-6 bg-drivefit-orange hover:bg-drivefit-orange/90 text-white" 
                       disabled={loading}
                     >
                       {loading ? "Processing..." : "Complete Payment"}
