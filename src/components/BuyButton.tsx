@@ -16,7 +16,7 @@ interface BuyButtonProps {
 const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { addActivity } = useUserData();
+  const { addActivity, refreshUserData } = useUserData();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -70,6 +70,9 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
       // Record activity
       addActivity("Started purchase", title);
       
+      // Ensure data is refreshed before navigation
+      refreshUserData();
+      
       navigate("/payment", { 
         state: { vehicleId, price, title } 
       });
@@ -86,6 +89,9 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
       
       // Record activity
       addActivity("Account type updated", "Changed to buyer and seller");
+      
+      // Ensure data is refreshed before navigation
+      refreshUserData();
       
       // Proceed with purchase after a small delay
       setTimeout(() => {

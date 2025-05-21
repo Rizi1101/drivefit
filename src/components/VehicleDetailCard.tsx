@@ -12,7 +12,30 @@ interface VehicleDetailCardProps {
 }
 
 const VehicleDetailCard = ({ vehicle, isFavorite, onToggleFavorite }: VehicleDetailCardProps) => {
+  const { toggleFavorite } = useUserData();
+  
   const handleToggle = () => {
+    // Check if user is logged in
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to save favorites",
+      });
+      return;
+    }
+    
+    // Toggle in the user data (localStorage)
+    toggleFavorite({
+      id: vehicle.id,
+      title: vehicle.title,
+      price: vehicle.price || "Not specified",
+      status: vehicle.status || "available",
+      dateAdded: vehicle.dateAdded || new Date().toISOString().split('T')[0],
+      image: vehicle.image || ""
+    });
+    
+    // Call parent component's onToggleFavorite to update UI
     onToggleFavorite();
     
     // Show toast based on the new state (reversed since state hasn't updated yet)

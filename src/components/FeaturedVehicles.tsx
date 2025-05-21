@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart } from "lucide-react";
@@ -52,10 +51,12 @@ const FEATURED_VEHICLES = [
 
 const FeaturedVehicles = () => {
   const navigate = useNavigate();
-  const [favorites, setFavorites] = useState<number[]>([]);
   const { userData, toggleFavorite, addActivity } = useUserData();
 
   // Initialize favorites based on user data
+  const [favorites, setFavorites] = useState<number[]>([]);
+  
+  // Update local state whenever userData changes
   useEffect(() => {
     const userFavoriteIds = userData.favorites.map(fav => fav.id);
     setFavorites(userFavoriteIds);
@@ -84,14 +85,14 @@ const FeaturedVehicles = () => {
       image: vehicle.image
     });
     
+    // Local state update should follow the userData update in useEffect
+    
     if (wasAdded) {
-      setFavorites(prev => [...prev, id]);
       toast({
         title: "Added to Favorites",
         description: `${vehicle.title} has been added to your favorites`,
       });
     } else {
-      setFavorites(prev => prev.filter(favId => favId !== id));
       toast({
         title: "Removed from Favorites",
         description: `${vehicle.title} has been removed from your saved list`,

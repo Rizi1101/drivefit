@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { toast } from '@/hooks/use-toast';
 
 export interface UserVehicleListing {
   id: number;
@@ -52,10 +51,39 @@ export const useUserData = () => {
     activities: []
   });
   
-  // Load user data from localStorage on mount
+  const [isLoaded, setIsLoaded] = useState(false);
+  
+  // Load user data from localStorage on mount and when email changes
   useEffect(() => {
+    loadUserData();
+  }, []);
+  
+  // Additional effect to monitor user email changes
+  useEffect(() => {
+    const handleStorageChange = () => {
+      loadUserData();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+  
+  // Load user data from localStorage
+  const loadUserData = () => {
     const userEmail = localStorage.getItem("userEmail");
-    if (!userEmail) return;
+    if (!userEmail) {
+      setUserData({
+        listings: [],
+        favorites: [],
+        transactions: [],
+        activities: []
+      });
+      setIsLoaded(true);
+      return;
+    }
     
     // Try to load user data from localStorage
     try {
@@ -145,7 +173,9 @@ export const useUserData = () => {
     } catch (error) {
       console.error("Error loading user data:", error);
     }
-  }, []);
+    
+    setIsLoaded(true);
+  };
   
   // Save data to localStorage
   const saveData = (data: UserData, email: string = localStorage.getItem("userEmail") || "") => {
@@ -167,6 +197,7 @@ export const useUserData = () => {
     
     // Add activity log
     addActivity("Vehicle listing updated", "Your vehicle listings were updated");
+    return updatedData;
   };
   
   // Add a new listing
@@ -178,6 +209,7 @@ export const useUserData = () => {
     
     // Add activity log
     addActivity("Vehicle listed", listing.title);
+    return updatedData;
   };
   
   // Delete a listing
@@ -194,6 +226,7 @@ export const useUserData = () => {
     } else {
       addActivity("Vehicle listing removed", `Listing #${id} was removed`);
     }
+    return updatedData;
   };
   
   // Toggle favorite status
@@ -257,6 +290,8 @@ export const useUserData = () => {
         price: transaction.price
       }
     }));
+    
+    return updatedData;
   };
   
   // Add activity log
@@ -272,6 +307,8 @@ export const useUserData = () => {
     const updatedData = { ...userData, activities: updatedActivities };
     setUserData(updatedData);
     saveData(updatedData);
+    
+    return updatedData;
   };
   
   // Get current stats for the user dashboard
@@ -284,8 +321,14 @@ export const useUserData = () => {
     };
   };
   
+  // Add refreshUserData method to allow manual refresh
+  const refreshUserData = () => {
+    loadUserData();
+  };
+  
   return {
     userData,
+    isLoaded,
     updateListings,
     addListing,
     deleteListing,
@@ -293,6 +336,7 @@ export const useUserData = () => {
     removeFavorite,
     addTransaction,
     addActivity,
-    getUserStats
+    getUserStats,
+    refreshUserData
   };
 };
