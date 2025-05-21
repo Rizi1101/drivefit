@@ -51,6 +51,13 @@ export const useUserData = () => {
     activities: []
   });
   
+  const [userStats, setUserStats] = useState({
+    listings: 0,
+    favorites: 0,
+    transactions: 0,
+    activities: 0
+  });
+  
   const [isLoaded, setIsLoaded] = useState(false);
   
   // Load user data from localStorage on mount and when email changes
@@ -70,6 +77,13 @@ export const useUserData = () => {
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
+  
+  // Update stats whenever userData changes
+  useEffect(() => {
+    if (isLoaded) {
+      updateStats();
+    }
+  }, [userData]);
   
   // Load user data from localStorage
   const loadUserData = () => {
@@ -175,6 +189,16 @@ export const useUserData = () => {
     }
     
     setIsLoaded(true);
+  };
+  
+  // Update stats based on current userData
+  const updateStats = () => {
+    setUserStats({
+      listings: userData.listings.length,
+      favorites: userData.favorites.length,
+      transactions: userData.transactions.length,
+      activities: userData.activities.length
+    });
   };
   
   // Save data to localStorage
@@ -311,14 +335,9 @@ export const useUserData = () => {
     return updatedData;
   };
   
-  // Get current stats for the user dashboard
+  // Get current stats for the user dashboard - now using the real-time stats
   const getUserStats = () => {
-    return {
-      listings: userData.listings.length,
-      favorites: userData.favorites.length,
-      transactions: userData.transactions.length,
-      activities: userData.activities.length
-    };
+    return userStats;
   };
   
   // Add refreshUserData method to allow manual refresh
@@ -337,6 +356,7 @@ export const useUserData = () => {
     addTransaction,
     addActivity,
     getUserStats,
-    refreshUserData
+    refreshUserData,
+    userStats // Export the userStats value directly
   };
 };

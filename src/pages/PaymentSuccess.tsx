@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import { useUserData } from "@/hooks/use-user-data";
 const PaymentSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { addTransaction } = useUserData();
+  const { addTransaction, refreshUserData } = useUserData();
   
   // Get transaction ID from state or generate a new one
   const transactionId = location.state?.transactionId || "TXN" + Math.floor(Math.random() * 1000000);
@@ -43,6 +42,9 @@ const PaymentSuccess = () => {
       // Clear any pending purchase
       localStorage.removeItem("pendingPurchase");
       sessionStorage.removeItem("pendingOperation");
+      
+      // Refresh user data to update stats
+      refreshUserData();
     }
     
     // Show success notification
@@ -50,7 +52,7 @@ const PaymentSuccess = () => {
       title: "Transaction Completed",
       description: "Your vehicle purchase was successful",
     });
-  }, [addTransaction, date, transactionId, vehicleData.price, vehicleData.title]);
+  }, [addTransaction, date, transactionId, vehicleData.price, vehicleData.title, refreshUserData]);
   
   return (
     <div className="min-h-screen flex flex-col">
