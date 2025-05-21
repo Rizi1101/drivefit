@@ -107,7 +107,7 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
       <Button 
         onClick={handleBuyClick} 
         disabled={isLoading}
-        className="w-full bg-drivefit-blue hover:bg-drivefit-blue/90 text-white py-3 px-4 rounded flex items-center justify-center"
+        className="w-full bg-drivefit-orange hover:bg-drivefit-orange/90 text-white py-3 px-4 rounded flex items-center justify-center"
       >
         <ShoppingCart className="mr-2 h-5 w-5" />
         Buy Now

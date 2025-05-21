@@ -58,7 +58,7 @@ const VehicleDetailCard = ({ vehicle, isFavorite, onToggleFavorite }: VehicleDet
       <div className="flex space-x-2">
         <Button 
           variant="outline" 
-          className={isFavorite ? "bg-drivefit-red text-white" : ""}
+          className={isFavorite ? "bg-drivefit-red text-white" : "border-drivefit-orange text-drivefit-orange hover:bg-drivefit-orange hover:text-white"}
           onClick={handleToggle}
         >
           <Heart className={`mr-2 h-5 w-5 ${isFavorite ? "fill-current" : ""}`} /> 

@@ -56,18 +56,18 @@ const PaymentSuccess = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <div className="flex-grow py-12 flex items-center justify-center px-4">
-        <Card className="max-w-md w-full">
+      <div className="flex-grow py-12 flex items-center justify-center px-4 bg-drivefit-white">
+        <Card className="max-w-md w-full border-drivefit-orange/20">
           <CardHeader className="flex flex-col items-center pb-6">
-            <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <Check className="h-8 w-8 text-green-600" />
+            <div className="h-16 w-16 bg-drivefit-orange/10 rounded-full flex items-center justify-center mb-4">
+              <Check className="h-8 w-8 text-drivefit-orange" />
             </div>
-            <h1 className="text-2xl font-bold text-center">Payment Successful!</h1>
+            <h1 className="text-2xl font-bold text-center text-drivefit-black">Payment Successful!</h1>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="bg-green-50 p-4 rounded-lg border border-green-100 text-center">
-              <p className="text-green-800">Thank you for your payment</p>
-              <p className="text-sm text-green-600 mt-1">Your transaction has been completed successfully</p>
+            <div className="bg-drivefit-orange/5 p-4 rounded-lg border border-drivefit-orange/10 text-center">
+              <p className="text-drivefit-black font-medium">Thank you for your payment</p>
+              <p className="text-sm text-drivefit-orange mt-1">Your transaction has been completed successfully</p>
             </div>
             
             <div className="space-y-3">
@@ -85,7 +85,7 @@ const PaymentSuccess = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Amount:</span>
-                <span className="font-medium">{vehicleData.price || "PKR 3,000"}</span>
+                <span className="font-medium text-drivefit-orange">{vehicleData.price || "PKR 3,000"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-500">Payment Method:</span>
@@ -95,14 +95,14 @@ const PaymentSuccess = () => {
             
             <div className="text-center space-y-3 pt-4">
               <Button 
-                className="w-full" 
+                className="w-full bg-drivefit-orange hover:bg-drivefit-orange/90 text-white" 
                 onClick={() => navigate("/vehicles")}
               >
                 Continue Browsing
               </Button>
               <Button 
                 variant="outline" 
-                className="w-full"
+                className="w-full border-drivefit-orange text-drivefit-orange hover:bg-drivefit-orange hover:text-white"
                 onClick={() => navigate("/user-dashboard")}
               >
                 View My Account

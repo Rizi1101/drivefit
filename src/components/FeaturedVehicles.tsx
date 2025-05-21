@@ -1,5 +1,5 @@
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -115,10 +115,10 @@ const FeaturedVehicles = () => {
   };
 
   return (
-    <section className="py-16 bg-drivefit-gray">
+    <section className="py-16 bg-drivefit-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Vehicles</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-drivefit-black">Featured Vehicles</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Explore our handpicked selection of premium Pakistani vehicles that match your preferences
           </p>
@@ -126,7 +126,7 @@ const FeaturedVehicles = () => {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {FEATURED_VEHICLES.map((vehicle) => (
-            <div key={vehicle.id} className="vehicle-card group">
+            <div key={vehicle.id} className="vehicle-card group shadow-md hover:shadow-xl transition-shadow">
               <div className="relative h-48 md:h-56">
                 <img 
                   src={vehicle.image} 
@@ -145,13 +145,13 @@ const FeaturedVehicles = () => {
               </div>
               <div className="p-4 bg-white">
                 <h3 className="text-lg font-medium mb-1">{vehicle.title}</h3>
-                <p className="text-drivefit-red font-bold mb-2">{vehicle.price}</p>
+                <p className="text-drivefit-orange font-bold mb-2">{vehicle.price}</p>
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>{vehicle.location}</span>
                   <span>{vehicle.mileage} km</span>
                 </div>
                 <Button 
-                  className="w-full mt-4 bg-drivefit-blue hover:bg-drivefit-blue/90 text-white"
+                  className="w-full mt-4 bg-drivefit-orange hover:bg-drivefit-orange/90 text-white"
                   onClick={() => handleViewDetails(vehicle.id, vehicle.title)}
                 >
                   View Details
@@ -164,7 +164,7 @@ const FeaturedVehicles = () => {
         <div className="text-center mt-10">
           <Button 
             variant="outline" 
-            className="px-8"
+            className="px-8 border-drivefit-orange text-drivefit-orange hover:bg-drivefit-orange hover:text-white"
             onClick={handleViewAll}
           >
             View All Vehicles
