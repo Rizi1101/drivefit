@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
@@ -55,7 +56,12 @@ const PAKISTAN_VEHICLES: Vehicle[] = [
     year: 2022,
     vehicleType: "Sedan",
     brand: "Toyota",
-    image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+    image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    postedDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    views: 245,
+    sellerName: "Ahmed Motors",
+    sellerRating: 4.8,
+    isVerified: true
   },
   {
     id: 2,
@@ -69,7 +75,12 @@ const PAKISTAN_VEHICLES: Vehicle[] = [
     year: 2021,
     vehicleType: "Sedan",
     brand: "Honda",
-    image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f37?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+    image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f37?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    postedDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    views: 189,
+    sellerName: "City Motors",
+    sellerRating: 4.6,
+    isVerified: true
   },
   {
     id: 3,
@@ -83,7 +94,12 @@ const PAKISTAN_VEHICLES: Vehicle[] = [
     year: 2020,
     vehicleType: "Hatchback",
     brand: "Suzuki",
-    image: "https://images.unsplash.com/photo-1549399542-7e38e2ee9233?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+    image: "https://images.unsplash.com/photo-1549399542-7e38e2ee9233?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    postedDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    views: 156,
+    sellerName: "Swift Dealer",
+    sellerRating: 4.2,
+    isVerified: false
   },
   {
     id: 4,
@@ -97,7 +113,12 @@ const PAKISTAN_VEHICLES: Vehicle[] = [
     year: 2023,
     vehicleType: "SUV",
     brand: "KIA",
-    image: "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+    image: "https://images.unsplash.com/photo-1533106418989-88406c7cc8ca?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    postedDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000),
+    views: 312,
+    sellerName: "KIA Showroom",
+    sellerRating: 4.9,
+    isVerified: true
   },
   {
     id: 5,
@@ -111,7 +132,12 @@ const PAKISTAN_VEHICLES: Vehicle[] = [
     year: 2019,
     vehicleType: "SUV",
     brand: "Toyota",
-    image: "https://images.unsplash.com/photo-1669215420582-11464593e1e6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+    image: "https://images.unsplash.com/photo-1669215420582-11464593e1e6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    postedDate: new Date(Date.now() - 6 * 60 * 60 * 1000),
+    views: 203,
+    sellerName: "Premium Auto",
+    sellerRating: 4.5,
+    isVerified: true
   },
   {
     id: 6,
@@ -125,7 +151,12 @@ const PAKISTAN_VEHICLES: Vehicle[] = [
     year: 2021,
     vehicleType: "Hatchback",
     brand: "Suzuki",
-    image: "https://images.unsplash.com/photo-1551830820-330a71b99659?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+    image: "https://images.unsplash.com/photo-1551830820-330a71b99659?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    postedDate: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    views: 124,
+    sellerName: "Honda Dealer",
+    sellerRating: 4.4,
+    isVerified: true
   },
   {
     id: 7,
@@ -139,7 +170,12 @@ const PAKISTAN_VEHICLES: Vehicle[] = [
     year: 2018,
     vehicleType: "Pickup",
     brand: "Toyota",
-    image: "https://images.unsplash.com/photo-1559416123-c31d4644a008?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+    image: "https://images.unsplash.com/photo-1559416123-c31d4644a008?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    postedDate: new Date(Date.now() - 30 * 60 * 1000),
+    views: 67,
+    sellerName: "Auto Plaza",
+    sellerRating: 4.1,
+    isVerified: false
   },
   {
     id: 8,
@@ -153,7 +189,12 @@ const PAKISTAN_VEHICLES: Vehicle[] = [
     year: 2022,
     vehicleType: "Crossover",
     brand: "Hyundai",
-    image: "https://images.unsplash.com/photo-1583267746897-2cf415887172?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+    image: "https://images.unsplash.com/photo-1583267746897-2cf415887172?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
+    postedDate: new Date(Date.now() - 12 * 60 * 60 * 1000),
+    views: 87,
+    sellerName: "Hyundai Motors",
+    sellerRating: 4.7,
+    isVerified: true
   }
 ];
 
