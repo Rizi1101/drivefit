@@ -53,15 +53,15 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // DriveFit brand colors - removed green, updated to modern blue/orange theme
+        // Professional DriveFit brand colors inspired by PakWheels
         drivefit: {
-          orange: "#FF5F00", // Main orange color
-          black: "#000000",
+          orange: "#FF5F00", // Primary orange
+          black: "#1a1a1a",  // Professional black
           white: "#FFFFFF",
-          gray: "#F5F5F5", 
-          blue: "#0c4da2", // Primary blue for accents
-          red: "#e11d48",  // Keep this for alerts
-          purple: "#8b5cf6", // New accent color replacing green
+          gray: "#f8f9fa",   // Light gray background
+          blue: "#0c4da2",   // Professional blue
+          red: "#dc2626",    // Error/alert red
+          purple: "#7c3aed", // Accent purple
         },
       },
       borderRadius: {
@@ -78,10 +78,20 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "fade-in": {
+          from: { opacity: "0", transform: "translateY(20px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "scale-in": {
+          from: { opacity: "0", transform: "scale(0.9)" },
+          to: { opacity: "1", transform: "scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": "fade-in 0.6s ease-out",
+        "scale-in": "scale-in 0.4s ease-out",
       },
     },
   },

@@ -23,7 +23,7 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 271 70% 25%;
+    --accent: 221 70% 25%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 84.2% 60.2%;
@@ -46,40 +46,40 @@
   }
 
   .dark {
-    --background: 0 0% 5%;
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
-    --card: 0 0% 10%;
+    --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 10%;
+    --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 221 70% 40%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 15%;
+    --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 0 0% 15%;
+    --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 271 70% 40%;
+    --accent: 221 70% 40%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
     --ring: 221 70% 40%;
-    --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 95%;
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 221 70% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 15%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
     --sidebar-ring: 221 70% 40%;
   }
 }
@@ -105,27 +105,27 @@
   }
   
   .glass-nav {
-    @apply bg-white/20 backdrop-blur-md border-b border-white/10;
+    @apply bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm;
   }
   
   .nav-link {
-    @apply text-black hover:text-drivefit-blue transition-colors duration-300;
+    @apply text-drivefit-black hover:text-drivefit-orange transition-colors duration-300;
   }
   
   .btn-primary {
-    @apply bg-drivefit-blue text-white hover:bg-opacity-90 transition-all duration-300 font-medium;
+    @apply bg-drivefit-orange text-white hover:bg-drivefit-orange/90 transition-all duration-300 font-medium;
   }
   
   .btn-secondary {
-    @apply bg-black text-white hover:bg-opacity-80 transition-all duration-300 font-medium;
+    @apply bg-drivefit-blue text-white hover:bg-drivefit-blue/90 transition-all duration-300 font-medium;
   }
   
   .vehicle-card {
-    @apply relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.01];
+    @apply relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] bg-white;
   }
   
   .vehicle-card-overlay {
-    @apply absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent text-white;
+    @apply absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white;
   }
   
   .animate-enter {
@@ -139,4 +139,53 @@
   .hover-scale {
     @apply transition-transform duration-300 hover:scale-105;
   }
+}
+
+/* Enhanced animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.4s ease-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #FF5F00;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e55300;
 }
