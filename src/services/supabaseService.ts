@@ -5,14 +5,37 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Check if Supabase is properly configured
+const isSupabaseConfigured = supabaseUrl && supabaseKey;
+
+// Create Supabase client only if configured, otherwise use mock
+export const supabase = isSupabaseConfigured 
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
+
+// Mock functions for when Supabase is not configured
+const createMockResponse = (data: any = null) => ({
+  data,
+  error: null
+});
+
+const createMockSubscription = () => ({
+  subscribe: () => ({
+    unsubscribe: () => {}
+  })
+});
 
 // Database operations for vehicles
 export const vehicleService = {
   // Add new vehicle to database
   async addVehicle(vehicleData: any) {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Vehicle added to database:', vehicleData);
+      return createMockResponse([{ ...vehicleData, id: Date.now() }]);
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('vehicles')
         .insert([vehicleData])
         .select();
@@ -28,8 +51,13 @@ export const vehicleService = {
 
   // Get all vehicles from database
   async getAllVehicles() {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Fetching all vehicles');
+      return createMockResponse([]);
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('vehicles')
         .select('*')
         .order('created_at', { ascending: false });
@@ -44,8 +72,13 @@ export const vehicleService = {
 
   // Update vehicle in database
   async updateVehicle(id: number, updates: any) {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Vehicle updated in database:', { id, updates });
+      return createMockResponse([{ id, ...updates }]);
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('vehicles')
         .update(updates)
         .eq('id', id)
@@ -62,8 +95,13 @@ export const vehicleService = {
 
   // Delete vehicle from database
   async deleteVehicle(id: number) {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Vehicle deleted from database:', id);
+      return true;
+    }
+
     try {
-      const { error } = await supabase
+      const { error } = await supabase!
         .from('vehicles')
         .delete()
         .eq('id', id);
@@ -79,7 +117,12 @@ export const vehicleService = {
 
   // Subscribe to real-time vehicle changes
   subscribeToVehicleChanges(callback: (payload: any) => void) {
-    return supabase
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Subscribing to vehicle changes');
+      return createMockSubscription();
+    }
+
+    return supabase!
       .channel('vehicles')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'vehicles' }, callback)
       .subscribe();
@@ -90,8 +133,22 @@ export const vehicleService = {
 export const transactionService = {
   // Add new transaction to database
   async addTransaction(transactionData: any) {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Transaction added to database:', transactionData);
+      
+      // Mock activity logging
+      await activityService.addActivity({
+        user_id: transactionData.user_id,
+        activity_type: 'purchase',
+        description: `Purchased ${transactionData.vehicle_title}`,
+        metadata: { transaction_id: Date.now(), vehicle_id: transactionData.vehicle_id }
+      });
+      
+      return createMockResponse([{ ...transactionData, id: Date.now() }]);
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('transactions')
         .insert([transactionData])
         .select();
@@ -116,8 +173,13 @@ export const transactionService = {
 
   // Get user transactions
   async getUserTransactions(userId: string) {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Fetching user transactions for:', userId);
+      return createMockResponse([]);
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('transactions')
         .select('*')
         .eq('user_id', userId)
@@ -136,8 +198,13 @@ export const transactionService = {
 export const activityService = {
   // Add new activity to database
   async addActivity(activityData: any) {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Activity logged to database:', activityData);
+      return createMockResponse([{ ...activityData, id: Date.now(), created_at: new Date().toISOString() }]);
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('user_activities')
         .insert([{
           ...activityData,
@@ -156,8 +223,13 @@ export const activityService = {
 
   // Get user activities
   async getUserActivities(userId: string) {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Fetching user activities for:', userId);
+      return createMockResponse([]);
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('user_activities')
         .select('*')
         .eq('user_id', userId)
@@ -177,8 +249,13 @@ export const activityService = {
 export const notificationService = {
   // Add notification to database
   async addNotification(notificationData: any) {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Notification added to database:', notificationData);
+      return createMockResponse([{ ...notificationData, id: Date.now() }]);
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('notifications')
         .insert([notificationData])
         .select();
@@ -194,8 +271,13 @@ export const notificationService = {
 
   // Get user notifications
   async getUserNotifications(userId: string) {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Fetching user notifications for:', userId);
+      return createMockResponse([]);
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('notifications')
         .select('*')
         .eq('user_id', userId)
@@ -211,8 +293,13 @@ export const notificationService = {
 
   // Mark notification as read
   async markAsRead(notificationId: number) {
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Notification marked as read:', notificationId);
+      return;
+    }
+
     try {
-      const { error } = await supabase
+      const { error } = await supabase!
         .from('notifications')
         .update({ read: true })
         .eq('id', notificationId);
@@ -227,7 +314,12 @@ export const notificationService = {
 
   // Subscribe to real-time notifications
   subscribeToNotifications(userId: string, callback: (payload: any) => void) {
-    return supabase
+    if (!isSupabaseConfigured) {
+      console.log('Mock: Subscribing to notifications for user:', userId);
+      return createMockSubscription();
+    }
+
+    return supabase!
       .channel('notifications')
       .on('postgres_changes', 
         { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` }, 
