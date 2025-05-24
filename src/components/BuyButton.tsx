@@ -5,6 +5,7 @@ import { ShoppingCart, Calendar, CreditCard } from "lucide-react";
 import AuthPrompt from "./AuthPrompt";
 import { toast } from "@/hooks/use-toast";
 import { useUserData } from "@/hooks/use-user-data";
+import { transactionService, activityService, notificationService } from "@/services/supabaseService";
 import {
   Dialog,
   DialogContent,
@@ -97,29 +98,74 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
     }
   };
 
-  const handleFullPurchase = () => {
+  const handleFullPurchase = async () => {
     if (!handleAuthCheck("buy")) return;
     
-    toast({
-      title: "Processing Purchase",
-      description: `Preparing ${title} for checkout`
-    });
+    setIsLoading(true);
     
-    // Record activity
-    addActivity("Started purchase", title);
-    
-    // Ensure data is refreshed before navigation
-    refreshUserData();
-    
-    // Pass the complete vehicle information to the payment page
-    navigate("/payment", { 
-      state: { 
-        vehicleId, 
-        price, 
-        title,
-        transactionId: "TXN" + Math.floor(Math.random() * 1000000)
-      } 
-    });
+    try {
+      const transactionId = "TXN" + Math.floor(Math.random() * 1000000);
+      const userId = userEmail || 'anonymous';
+      
+      // Save transaction to database
+      await transactionService.addTransaction({
+        user_id: userId,
+        vehicle_id: vehicleId,
+        vehicle_title: title,
+        price: price,
+        transaction_id: transactionId,
+        status: 'completed',
+        payment_method: 'bank_transfer'
+      });
+      
+      // Add activity to database
+      await activityService.addActivity({
+        user_id: userId,
+        activity_type: 'purchase',
+        description: `Started purchase process for ${title}`,
+        metadata: { vehicle_id: vehicleId, price: price }
+      });
+      
+      // Add notification
+      await notificationService.addNotification({
+        user_id: userId,
+        title: 'Purchase Started',
+        message: `You started purchasing ${title}`,
+        type: 'purchase',
+        read: false
+      });
+      
+      toast({
+        title: "Processing Purchase",
+        description: `Preparing ${title} for checkout`
+      });
+      
+      // Record activity in local storage as well
+      addActivity("Started purchase", title);
+      
+      // Ensure data is refreshed before navigation
+      refreshUserData();
+      
+      // Pass the complete vehicle information to the payment page
+      navigate("/payment", { 
+        state: { 
+          vehicleId, 
+          price, 
+          title,
+          transactionId
+        } 
+      });
+      
+    } catch (error) {
+      console.error('Error processing purchase:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process purchase. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const handleTokenPayment = () => {
@@ -132,7 +178,7 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
     setShowBookVisitDialog(true);
   };
   
-  const processTokenPayment = () => {
+  const processTokenPayment = async () => {
     if (!receiptImage) {
       toast({
         title: "Receipt Required",
@@ -142,19 +188,48 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
       return;
     }
     
-    // Record activity
-    addActivity("Token payment", `Paid token for ${title}`);
-    refreshUserData();
-    
-    setShowTokenDialog(false);
-    
-    toast({
-      title: "Token Payment Received",
-      description: "We've received your token payment, the seller will contact you shortly"
-    });
+    try {
+      const userId = userEmail || 'anonymous';
+      
+      // Add activity to database
+      await activityService.addActivity({
+        user_id: userId,
+        activity_type: 'token_payment',
+        description: `Paid token for ${title}`,
+        metadata: { vehicle_id: vehicleId, amount: '5000 PKR' }
+      });
+      
+      // Add notification
+      await notificationService.addNotification({
+        user_id: userId,
+        title: 'Token Payment Received',
+        message: `Token payment received for ${title}`,
+        type: 'payment',
+        read: false
+      });
+      
+      // Record activity in local storage as well
+      addActivity("Token payment", `Paid token for ${title}`);
+      refreshUserData();
+      
+      setShowTokenDialog(false);
+      
+      toast({
+        title: "Token Payment Received",
+        description: "We've received your token payment, the seller will contact you shortly"
+      });
+      
+    } catch (error) {
+      console.error('Error processing token payment:', error);
+      toast({
+        title: "Error",
+        description: "Failed to process token payment. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
-  const processBookVisit = () => {
+  const processBookVisit = async () => {
     if (!visitDate || !visitTime) {
       toast({
         title: "Date and Time Required",
@@ -164,16 +239,45 @@ const BuyButton = ({ vehicleId, price, title = "Vehicle" }: BuyButtonProps) => {
       return;
     }
     
-    // Record activity
-    addActivity("Visit booked", `Visit scheduled for ${title} on ${visitDate} at ${visitTime}`);
-    refreshUserData();
-    
-    setShowBookVisitDialog(false);
-    
-    toast({
-      title: "Visit Scheduled",
-      description: `Your visit is scheduled for ${visitDate} at ${visitTime}. The seller will confirm shortly.`
-    });
+    try {
+      const userId = userEmail || 'anonymous';
+      
+      // Add activity to database
+      await activityService.addActivity({
+        user_id: userId,
+        activity_type: 'visit_booking',
+        description: `Visit scheduled for ${title} on ${visitDate} at ${visitTime}`,
+        metadata: { vehicle_id: vehicleId, visit_date: visitDate, visit_time: visitTime }
+      });
+      
+      // Add notification
+      await notificationService.addNotification({
+        user_id: userId,
+        title: 'Visit Scheduled',
+        message: `Visit scheduled for ${title} on ${visitDate} at ${visitTime}`,
+        type: 'visit',
+        read: false
+      });
+      
+      // Record activity in local storage as well
+      addActivity("Visit booked", `Visit scheduled for ${title} on ${visitDate} at ${visitTime}`);
+      refreshUserData();
+      
+      setShowBookVisitDialog(false);
+      
+      toast({
+        title: "Visit Scheduled",
+        description: `Your visit is scheduled for ${visitDate} at ${visitTime}. The seller will confirm shortly.`
+      });
+      
+    } catch (error) {
+      console.error('Error booking visit:', error);
+      toast({
+        title: "Error",
+        description: "Failed to book visit. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   return (

@@ -53,15 +53,15 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // DriveFit brand colors
+        // DriveFit brand colors - removed green, updated to modern blue/orange theme
         drivefit: {
-          orange: "#FF5F00", // Main orange color from Sixt
+          orange: "#FF5F00", // Main orange color
           black: "#000000",
           white: "#FFFFFF",
           gray: "#F5F5F5", 
-          blue: "#0c4da2", // We'll keep this for accents
-          red: "#e11d48",  // Keep this for special elements
-          green: "#047857", // Keep this for success messages
+          blue: "#0c4da2", // Primary blue for accents
+          red: "#e11d48",  // Keep this for alerts
+          purple: "#8b5cf6", // New accent color replacing green
         },
       },
       borderRadius: {
