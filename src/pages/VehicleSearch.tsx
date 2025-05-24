@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
-import { Search, Filter, List, Grid, Car } from "lucide-react";
+import { Search, Filter, List, Grid, Car, Eye, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
@@ -18,6 +17,8 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useVehicleData } from "@/hooks/use-vehicle-data";
+import ChatBot from "@/components/ChatBot";
 
 // Type definitions
 type Vehicle = {
@@ -33,6 +34,11 @@ type Vehicle = {
   vehicleType: string;
   brand: string;
   image: string;
+  postedDate: Date;
+  views: number;
+  sellerName: string;
+  sellerRating: number;
+  isVerified: boolean;
 };
 
 // Pakistan vehicles data with added fields for filtering
@@ -164,8 +170,14 @@ type FilterFormValues = {
 const VehicleSearch = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
-  const [filteredVehicles, setFilteredVehicles] = useState<Vehicle[]>(PAKISTAN_VEHICLES);
+  const { vehicles, isLoading, incrementViews } = useVehicleData();
+  const [filteredVehicles, setFilteredVehicles] = useState(vehicles);
   
+  // Update filtered vehicles when vehicles data changes
+  useEffect(() => {
+    setFilteredVehicles(vehicles);
+  }, [vehicles]);
+
   // Price range constants
   const MIN_PRICE = 0;
   const MAX_PRICE = 10000000; // 10 million PKR
@@ -201,11 +213,21 @@ const VehicleSearch = () => {
   };
   
   // Handle view details action
-  const handleViewDetails = (id: number) => {
+  const handleViewDetails = (vehicle: any) => {
+    incrementViews(vehicle.id);
     toast({
       title: "Vehicle Selected",
-      description: `Viewing details for vehicle #${id}`,
+      description: `Viewing details for ${vehicle.title}`,
     });
+  };
+
+  const formatTimeSince = (date: Date) => {
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return "Just posted";
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    return `${Math.floor(diffInHours / 24)}d ago`;
   };
   
   // Handle applying filters
@@ -537,7 +559,11 @@ const VehicleSearch = () => {
           <p className="text-gray-600 mb-6">{filteredVehicles.length} vehicles found</p>
           
           {/* Vehicles Grid/List */}
-          {filteredVehicles.length > 0 ? (
+          {isLoading ? (
+            <div className="text-center py-16">
+              <p>Loading vehicles...</p>
+            </div>
+          ) : filteredVehicles.length > 0 ? (
             viewMode === "grid" ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredVehicles.map((vehicle) => (
@@ -548,9 +574,17 @@ const VehicleSearch = () => {
                         alt={vehicle.title} 
                         className="w-full h-full object-cover"
                       />
+                      <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                        {formatTimeSince(vehicle.postedDate)}
+                      </div>
                       <div className="absolute top-2 right-2 bg-drivefit-blue text-white px-2 py-1 rounded text-xs">
                         {vehicle.year}
                       </div>
+                      {vehicle.isVerified && (
+                        <div className="absolute bottom-2 right-2 bg-green-500 rounded-full p-1">
+                          <CheckCircle className="h-3 w-3 text-white" />
+                        </div>
+                      )}
                     </div>
                     <div className="p-4">
                       <h3 className="text-lg font-medium mb-1">{vehicle.title}</h3>
@@ -559,14 +593,21 @@ const VehicleSearch = () => {
                         <span>{vehicle.location}</span>
                         <span>{vehicle.mileage}</span>
                       </div>
-                      <div className="flex justify-between text-sm text-gray-500 mb-4">
+                      <div className="flex justify-between text-sm text-gray-500 mb-2">
                         <span>{vehicle.engineCapacity}</span>
                         <span>{vehicle.transmission}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span className="flex items-center gap-1">
+                          <Eye className="h-3 w-3" />
+                          {vehicle.views} views
+                        </span>
+                        <span>★ {vehicle.sellerRating}</span>
                       </div>
                       <Link to={`/vehicles/${vehicle.id}`}>
                         <Button 
                           className="w-full bg-drivefit-blue hover:bg-drivefit-blue/90 text-white"
-                          onClick={() => handleViewDetails(vehicle.id)}
+                          onClick={() => handleViewDetails(vehicle)}
                         >
                           View Details
                         </Button>
@@ -586,12 +627,23 @@ const VehicleSearch = () => {
                           alt={vehicle.title} 
                           className="w-full h-full object-cover"
                         />
+                        <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                          {formatTimeSince(vehicle.postedDate)}
+                        </div>
                         <div className="absolute top-2 right-2 bg-drivefit-blue text-white px-2 py-1 rounded text-xs">
                           {vehicle.year}
                         </div>
+                        {vehicle.isVerified && (
+                          <div className="absolute bottom-2 right-2 bg-green-500 rounded-full p-1">
+                            <CheckCircle className="h-3 w-3 text-white" />
+                          </div>
+                        )}
                       </div>
                       <div className="p-4 md:w-2/3">
-                        <h3 className="text-xl font-medium mb-2">{vehicle.title}</h3>
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-xl font-medium">{vehicle.title}</h3>
+                          <span className="text-sm text-gray-500">by {vehicle.sellerName}</span>
+                        </div>
                         <p className="text-drivefit-red font-bold text-xl mb-3">{vehicle.price}</p>
                         <div className="grid grid-cols-2 gap-x-4 gap-y-2 mb-4">
                           <div className="flex items-center text-gray-600">
@@ -600,11 +652,15 @@ const VehicleSearch = () => {
                           <div className="text-gray-600">{vehicle.location}</div>
                           <div className="text-gray-600">{vehicle.engineCapacity}</div>
                           <div className="text-gray-600">{vehicle.transmission}</div>
+                          <div className="flex items-center text-gray-600">
+                            <Eye size={16} className="mr-1" /> {vehicle.views} views
+                          </div>
+                          <div className="text-gray-600">★ {vehicle.sellerRating}</div>
                         </div>
                         <Link to={`/vehicles/${vehicle.id}`}>
                           <Button 
                             className="mt-2 bg-drivefit-blue hover:bg-drivefit-blue/90 text-white"
-                            onClick={() => handleViewDetails(vehicle.id)}
+                            onClick={() => handleViewDetails(vehicle)}
                           >
                             View Details
                           </Button>
@@ -649,6 +705,7 @@ const VehicleSearch = () => {
       </div>
       
       <Footer />
+      <ChatBot />
     </div>
   );
 };

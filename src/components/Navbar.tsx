@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/hooks/use-toast";
+import NotificationSystem from "./NotificationSystem";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -94,6 +94,9 @@ const Navbar = () => {
               <Search className="h-4 w-4" />
             </button>
           </form>
+
+          {/* Notification System */}
+          <NotificationSystem />
 
           {isLoggedIn ? (
             <DropdownMenu>
